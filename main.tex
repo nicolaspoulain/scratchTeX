@@ -1,0 +1,188 @@
+\documentclass[a4paper,0.952pt]{article}
+% -------------------------------------
+
+% Marges de la page
+\usepackage[left=4cm, right=1cm, top=1.5cm, bottom=1.5cm]{geometry}
+\setlength{\parindent}{0mm}             % pas de retrait de paragraphe
+
+\usepackage{graphicx}                   % pour images *.jpg ou *.png
+\usepackage{tikz, tkz-tab}
+\usepackage{pst-all}
+\usepackage{url}
+\usepackage{amsfonts, amsmath, amssymb}
+\usepackage[frenchb]{babel}             % règles françaises de typo
+\usepackage{fontspec}                   % pour fontes spéciales utilisé par babel
+
+\usepackage{color}
+\definecolor{mouvement}{RGB}{74,108,212}
+\definecolor{apparence}{RGB}{138,85,215}
+\definecolor{sons}{RGB}{187,66,195}
+\definecolor{stylo}{RGB}{14,154,108}
+\definecolor{donnees}{RGB}{238,125,22}
+\definecolor{evenements}{RGB}{200,131,48}
+\definecolor{controle}{RGB}{225,169,26}
+\definecolor{capteurs}{RGB}{44,165,226}
+\definecolor{operateurs}{RGB}{92,183,18}
+\definecolor{ajouterblocs}{RGB}{99,45,153}
+\definecolor{drapeaucolor}{RGB}{63,141,21}
+
+\def\vertloop{
+  \pspolygon[fillcolor=controle,fillstyle=solid,linestyle=none](0,0)(.6,0)(.6,1)(0,1)
+}
+
+\makeatletter
+
+\usepackage{pgf}
+\newcommand*{\getlength}[2]{\pgfmathsetmacro#1{round(3.51459804*#2)/100.0}}
+%\newcommand*{\getlength}[1]{\strip@pt\dimexpr0.035146\dimexpr#1\relax\relax}
+
+\def\field{\@ifstar\@@field\@field}
+\newcommand{\@field}[1]{%
+  \psframebox*[framearc=.7,fillcolor=white,framesep=4pt]{%
+    \color{black}\normalfont{\textsf{#1}}%
+}}
+\newcommand{\@@field}[1]{%
+  \psframebox*[framearc=.7,fillcolor=white,framesep=4pt]{%
+    \color{black}\normalfont{\textsf{#1}}$^\blacktriangledown$%
+}}
+\makeatother
+
+\newlength{\myl}
+\newcounter{ctr}
+\setcounter{ctr}{0}
+\newcounter{decal}
+\setcounter{decal}{0}
+\newcounter{ligne}
+\setcounter{ligne}{0}
+
+\newenvironment{boucle}[1]{%----------------------------------------------------
+  \settowidth{\myl}{\bfseries #1} \getlength{\myNumBE}{\the\myl}
+  \addtocounter{ligne}{-1}
+  \setcounter{ctr}{\thedecal}
+  \loop
+    \ifnum\thectr<\thedecal
+    \rput(!\thectr\space 0.65 mul \theligne){\vertloop}
+    \fi
+    \addtocounter{ctr}{-1}
+  \ifnum\thectr>-1 \repeat
+  \rput(!\thedecal\space 0.65 mul \theligne){
+    \psset{linearc=.05,fillcolor=controle,fillstyle=solid,linestyle=none}
+    \pspolygon(0,0)(.5,0)(.5,0.95)(0,0.95)
+    \pspolygon(.4,0)(2.1,0)(2.1,0.95)(1,0.95)(.9,.8)(.6,.8)(.5,0.95)(.4,0.95)
+    \rput(-0.35, 0){\pspolygon(1.4,0)(1.52,0)(1.62,-.15)(1.88,-.15)(1.98,0)(2.1,0)(2.1,0.95)(1.4,0.95)}
+    \pspolygon(2,0)(!\myNumBE\space .3 add 0)(!\myNumBE\space .3 add 0.95)(2,0.95)
+    % \pspolygon(2,0)(5,0)(5,0.95)(2,0.95)
+    \uput[0](0,0.5){\color{white}\textsf{\bfseries #1 }}
+  }
+  \addtocounter{decal}{1}
+}{%-----------------------------------------------------------------------------
+  \addtocounter{ligne}{-1}%
+\setcounter{ctr}{\thedecal}%
+\loop%
+\rput(!\thectr\space -1 add 0.65 mul \theligne){\vertloop}%
+\addtocounter{ctr}{-1}%
+\ifnum\thectr>0 \repeat%
+\addtocounter{decal}{-1}%
+\rput(!\thedecal\space 0.65 mul \theligne){%
+    \psset{linearc=.05,fillcolor=controle,fillstyle=solid,linestyle=none}
+    \pspolygon(0,0)(.5,0)(.5,0.95)(0,0.95)
+    \pspolygon(0.4,0)(0.52,0)(0.62,-.15)(0.88,-.15)(0.98,0)(1.1,0)(1.1,0.95)(0.4,0.95)
+    \rput(-0.35,0){\pspolygon(1.2,0)(2.1,0)(2.1,0.95)(2,0.95)(1.9,.8)(1.6,.8)(1.5,0.95)(1.2,0.95)
+    \pspolygon(1.2,0)(!\myNumBE\space .3 add 0)(!\myNumBE\space .3 add 0.95)(2,0.95)(1.9,.8)(1.6,.8)(1.5,0.95)(1.2,0.95)}
+\rput{-90}(!\myNumBE\space -0.43 add 0.4){\color{white}\scalebox{1.7}{\textsf{$\mathbf{\Lsh}$}}}
+}%
+}%------------------------------------------------------------------------------
+
+
+
+
+
+
+\newcommand{\bloc}[2]{% Bloc unique
+  \settowidth{\myl}{\bfseries #2} \getlength{\myNum}{\the\myl}
+  \addtocounter{ligne}{-1}%
+\setcounter{ctr}{\thedecal}%
+\loop%
+    \ifnum\thedecal>0
+\rput(!\thectr\space -1 add 0.65 mul \theligne){\vertloop}%
+\fi
+\addtocounter{ctr}{-1}%
+\ifnum\thectr>0 \repeat%
+\rput(!\thedecal\space 0.65 mul \theligne){
+  % \psset{linearc=.05,fillcolor=#1,fillstyle=solid,linestyle=none}
+\pspolygon(0,0)(.5,0)(.5,0.95)(0,0.95)
+\pspolygon(.4,0)(.52,0)(.62,-.15)(.88,-.15)(.98,0)(1.1,0)(1.1,0.95)(1,0.95)(.9,.8)(.6,.8)(.5,0.95)(.4,0.95)
+\pspolygon(1,0)(!\myNum\space .3 add 0)(!\myNum\space .3 add 0.95)(1,0.95)
+\uput[0](0,0.5){\color{white}\textsf{\bfseries #2}}
+}
+}
+
+
+\def\drapeau{%
+\psset{linearc=.05,fillcolor=controle,fillstyle=solid,linestyle=none}
+\pspolygon(0,0)(.5,0)(.5,0.95)(0,0.95)
+\pspolygon(.4,0)(.52,0)(.62,-.15)(.88,-.15)(.98,0)(1.1,0)(1.1,0.95)(1,0.95)(.9,.8)(.6,.8)(.5,0.95)(.4,0.95)
+\pspolygon(1,0)(5,0)(5,0.95)(1,0.95)
+\uput[0](0,0.5){\color{white}\textsf{\bfseries quand  \qquad  est cliqué}}
+\rput(1.15,-0.15){\pspolygon[linearc=0,linewidth=2pt,linecolor=drapeaucolor,linestyle=solid,fillcolor=drapeaucolor,fillstyle=solid](0.082,0.43)(0.2,0.95)(0.3,0.9)(0.4,0.88)(0.5,0.88)(0.7,0.92)(0.7,0.65)(0.5,0.6)(0.4,0.6)(0.3,0.65)(0.14,0.69)}
+\rput(1,-0.3){
+\pscustom[linestyle=none]{%
+\psline(-1,1)(1,1)
+\psellipticarc(0,1)(1,0.5){0}{180}
+\fill}}
+}
+
+
+
+\begin{document}
+
+\section{Introduction}
+
+
+    % \bloc{controle}{controle}
+    % \bloc{mouvement}{mouvement}
+    % \bloc{apparence}{apparence}
+    % \bloc{sons}{sons}
+    % \bloc{stylo}{stylo}
+    % \bloc{capteurs}{capteurs}
+    % \bloc{operateurs}{operateurs}
+    % \bloc{ajouterblocs}{ajouterblocs}
+
+% \begin{pspicture}(0,0)(4,6)%
+  % \psset{unit=3}
+  % \pspolygon[linewidth=2pt,linecolor=green,fillcolor=green,fillstyle=solid](0.08,0.4)(0.2,1)(0.2,0.95)(0.3,0.9)(0.4,0.88)(0.5,0.88)(0.7,0.92)(0.7,0.65)(0.5,0.6)(0.4,0.6)(0.3,0.65)(0.14,0.69)
+% \end{pspicture}%
+
+
+mmm
+
+
+\begin{pspicture}(0,0)(4,-17)%
+    \drapeau
+    \bloc{stylo}{effacer tout}
+    \bloc{stylo}{stylo en position d'écriture}
+    \bloc{stylo}{mettre la taille du stylo à \field{1}}
+    \begin{boucle}{répéter \field{240} fois}
+      \begin{boucle}{répéter \field{4} fois}
+        \bloc{mouvement}{avancer de \field{100}}
+        \bloc{mouvement}{tourner de \field*{90} degrés}
+      \end{boucle}
+      \bloc{mouvement}{tourner de \field{1.5} degrés}
+      \bloc{stylo}{ajouter \field{1} à la couleur du stylo}
+    \end{boucle}
+\end{pspicture}%
+\end{document}
+
+% \begin{pspicture}(0,0)(4,-17)%
+  % \begin{boucle}{controle}{répéter \field{11} fois}
+    % \bloc{donnees}{donnees}
+    % \bloc{evenements}{evenements}
+    % \begin{boucle}{controle}{répéter \field{2} fois}
+      % \bloc{mouvement}{mouvement \field{10}}
+      % \bloc{apparence}{apparence \field*{90}}
+      % \begin{boucle}{controle}{répéter indéfiniment}
+        % \bloc{stylo}{stylo}
+      % \end{boucle}
+    % \end{boucle}
+  % \end{boucle}
+% \end{pspicture}%
