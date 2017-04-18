@@ -121,6 +121,12 @@
 %##################################################
 % Low level definitions
 %##################################################
+\newdimen\ypos
+\ypos=0pt              % where to draw current block
+% how to calculate with dimen
+% \advance\ypos by 1pt % ypos = ypos + 1
+% \ypos=3\ypos         % ypos = 3 * ypos
+
 % \blockeventbase{width}
 \def\blockeventbase#1#2#3{
   \def\d{0.10}
@@ -166,6 +172,7 @@
     grestore%
   }%
 }
+\newcommand*{\getlength}[1]{\strip@pt\dimexpr0.035146\dimexpr#1\relax\relax}
 \makeatother
 
 %##################################################
@@ -174,7 +181,6 @@
 
 
 \makeatletter
-\newcommand*{\getlength}[1]{\strip@pt\dimexpr0.035146\dimexpr#1\relax\relax}
 
 \def\field{\@ifstar\@@field\@field}
 \newcommand{\@field}[1]{%
@@ -185,12 +191,13 @@
   \psframebox*[framearc=.7,fillcolor=white,framesep=2pt]{%
     \color{black}\normalfont{\textsf{#1}}$^\blacktriangledown$%
 }}
+\def\vertBlock#1#2{
+  \psset{linearc=0,linestyle=none}
+  \psset{fillcolor=controle,fillstyle=solid}
+  \psset{shadow=false}
+	\rput(-0.01,0){\pspolygon(0,-0.2)(#1,-0.2)(!#1 #2 0.2 add)(!0 #2 0.2 add)}
+}
 
-\newdimen\ypos
-\ypos=0pt              % where to draw current block
-% how to calculate with dimen
-% \advance\ypos by 1pt % ypos = ypos + 1
-% \ypos=3\ypos         % ypos = 3 * ypos
 
 %----------------------------- \blockevent{text}
 \def\blockevent#1{
@@ -210,10 +217,18 @@
 \def\blockblank#1{
   \settowidth{\myl}{\bfseries#1}
   \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
+  \setcounter{ctr}{\thedecal}
+  \loop
+    \ifnum\thedecal>0
+			\rput(!\thectr\space -1 add 0.65 mul \Y){\vertBlock{0.6}{0.711}}
+    \fi
+    \addtocounter{ctr}{-1}
+    \ifnum\thectr>0
+  \repeat
   \psset{linearc=0.05,linestyle=solid}
-  \psset{fillcolor=white,fillstyle=solid}
+  \psset{fillstyle=none}
   \psset{shadow=false,shadowsize=1pt}
-  \rput(0,\Y){
+  \rput(!\thedecal\space 0.65 mul \Y){
     \blockbase{\getlength{\the\myl}}{0.711}{0.5}{.51}
     \psset{shadow=false}
     \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries 1}}
@@ -224,15 +239,54 @@
 \def\block#1#2{
   \settowidth{\myl}{\bfseries#2}
   \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
+  \setcounter{ctr}{\thedecal}
+  \loop
+    \ifnum\thedecal>0
+			\rput(!\thectr\space -1 add 0.65 mul \Y){\vertBlock{0.6}{0.711}}
+    \fi
+    \addtocounter{ctr}{-1}
+    \ifnum\thectr>0
+  \repeat
   \psset{linearc=0.05,linestyle=none}
   \psset{fillcolor=#1,fillstyle=solid}
   \psset{shadow=true,shadowsize=1pt}
-  \rput(0,\Y){
+  \rput(!\thedecal\space 0.65 mul \Y){
     \blockbase{\getlength{\the\myl}}{0.711}{0.5}{.51}
     \psset{shadow=false}
     \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries #2}}
   }
   \advance\ypos by -0.772pt % block height + a little bit
+}
+%----------------------------- \blockBegin{text}
+\newcounter{nbloop}
+\setcounter{nbloop}{0}
+\def\blockBegin#1{
+  \settowidth{\myl}{\bfseries#1}
+  \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
+  \psset{linearc=0.05,linestyle=none}
+  \psset{fillcolor=controle,fillstyle=solid}
+  \psset{shadow=true,shadowsize=1pt}
+  \rput(0,\Y){
+    \blockbase{\getlength{\the\myl}}{0.711}{1.15}{0.51}
+    \psset{shadow=false}
+    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries #1}}
+  }
+  \advance\ypos by -0.772pt % block height + a little bit
+  \addtocounter{decal}{1}
+}
+\def\blockEnd{
+  \settowidth{\myl}{bfseriesqqsqsqsqs}
+  \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
+  \psset{linearc=0.05,linestyle=none}
+  \psset{fillcolor=controle,fillstyle=solid}
+  \psset{shadow=true,shadowsize=1pt}
+  \rput(0,\Y){
+    \blockbase{\getlength{\the\myl}}{0.711}{0.5}{1.16}
+    \psset{shadow=false}
+    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries up}}
+  }
+  \advance\ypos by -0.772pt % block height + a little bit
+  \addtocounter{decal}{-1}
 }
 \makeatother
 
@@ -244,13 +298,31 @@
 \section{Introduction}
 
 \begin{pspicture}(0,1)(4,-4)%
-  \blockevent{quand ce lutin est cliqué}
-  \block{mouvement}{donner la valeur \field{0} à x }
-  \block{stylo}{mon texte super long}
-  \blockblank{ioioioiioio texte super long}
-  \blockblank{ioioioiioio texte super long}
-  \blockblank{ioioioiioio texte super long}
-  \block{evenements}{le texte du bloc \field*{90}}
+  % \blockevent{quand ce lutin est cliqué}
+	\blockevent{quand ce lutin est cliqué}
+	\blockBegin{blockBegin yes}
+	\block{mouvement}{donner la valeur \field{0} à x }
+	\blockblank{ioioioiioio texte super long}
+	\block{evenements}{le texte du bloc \field*{90}}
+	\blockEnd
+	\blockblank{ioioioiioio texte super long}
+		% \block{stylo}{mon texte super long}
+	\block{evenements}{ioioioing}
+  % \blockblank{ioioioiioio texte super long}
+  % \blockblank{ioioioiioio texte super long}
+  % \block{evenements}{le texte du bloc \field*{90}}
+\end{pspicture}
+
+\begin{pspicture}(0,5)(4,-4)%
+	\blockblank{ioioioiioio texte super long}
+	\blockblank{ioioioiioio texte super long}
+	\blockblank{ioiioio texte super long}
+	\blockblank{ioioioiioio texte super long}
+		% \block{stylo}{mon texte super long}
+	\blockblank{ioioioing}
+  % \blockblank{ioioioiioio texte super long}
+  % \blockblank{ioioioiioio texte super long}
+  % \block{evenements}{le texte du bloc \field*{90}}
 \end{pspicture}
 
 \end{document}
