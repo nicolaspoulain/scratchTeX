@@ -5,6 +5,7 @@
 \usepackage[left=4cm, right=1cm, top=1.5cm, bottom=1.5cm]{geometry}
 \setlength{\parindent}{0mm}             % pas de retrait de paragraphe
 
+\usepackage{graphics}
 \usepackage{graphicx}                   % pour images *.jpg ou *.png
 \usepackage{tikz, tkz-tab}
 \usepackage{pst-all}
@@ -30,19 +31,6 @@
   \pspolygon[fillcolor=controle,fillstyle=solid,linestyle=none](0,0)(.6,0)(.6,1)(0,1)
 }
 
-\makeatletter
-
-
-\def\field{\@ifstar\@@field\@field}
-\newcommand{\@field}[1]{%
-  \psframebox*[framearc=.7,fillcolor=white,framesep=4pt]{%
-    \color{black}\normalfont{\textsf{#1}}%
-}}
-\newcommand{\@@field}[1]{%
-  \psframebox*[framearc=.7,fillcolor=white,framesep=4pt]{%
-    \color{black}\normalfont{\textsf{#1}}$^\blacktriangledown$%
-}}
-\makeatother
 
 \newlength{\myl}
 \newcounter{ctr}
@@ -160,17 +148,27 @@
 \makeatletter
 \newcommand*{\getlength}[1]{\strip@pt\dimexpr0.035146\dimexpr#1\relax\relax}
 
-\usepackage{graphics}
+\def\field{\@ifstar\@@field\@field}
+\newcommand{\@field}[1]{%
+  \psframebox*[framearc=.7,fillcolor=white,framesep=2pt]{%
+    \color{black}\normalfont{\textsf{#1}}%
+}}
+\newcommand{\@@field}[1]{%
+  \psframebox*[framearc=.7,fillcolor=white,framesep=2pt]{%
+    \color{black}\normalfont{\textsf{#1}}$^\blacktriangledown$%
+}}
+
 
 % \block{color}{text}
 \def\block#1#2{
   \settowidth{\myl}{\bfseries#2}
   \Gscale@div\Y \ypos{1pt}
   \rput(0,\Y){
-    \blockbase{\getlength{\the\myl}}{0.711}{1}{1.02}{#1}
-    \uput[0](!0 0.711 2.3 div){\color{white}\textsf{\bfseries #2}}
+    \blockbase{\getlength{\the\myl}}{0.711}{1}{1.01}{#1}
+    \psset{shadow=false}
+    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries #2}}
   }
-  \advance\ypos by -0.811pt
+  \advance\ypos by -0.771pt
 }
 \makeatother
 
@@ -182,9 +180,9 @@
 \section{Introduction}
 
 \begin{pspicture}(0,1)(4,-4)%
-  \block{evenements}{Le texte du bloc}
-  \block{stylo}{Mon texte super longg longMon texte super longg long}
-  \block{stylo}{Mon texte super longg longMon texte super longg long}
+  \block{stylo}{Mon texte super long}
+  \block{evenements}{Le texte du bloc \field*{90}}
+  \block{stylo}{Mon texte super \field{12} long}
 \end{pspicture}
 
 \begin{pspicture}(0,1)(4,0)%
