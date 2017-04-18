@@ -126,6 +126,32 @@
 % \ypos=3\ypos
 
 
+% \blockeventbase{width}
+\def\blockeventbase#1#2#3{
+  % \def\y{0.511}
+  % \def\xb{1}
+  \def\d{0.10}
+  \def\l{0.25}
+  \def\yb{-0.1}
+  \psset{linearc=0.05,linestyle=none}
+  \psset{fillcolor=evenements,fillstyle=solid}
+  \psset{shadow=true,shadowsize=1pt}
+  \pscustom{%
+  \psline(0,0)(0,#2)
+  \psellipticarc(!1.19 #2 -0.19 add)(1.3,0.5){10}{170}
+  \psline
+    (2.6,#2)
+    (#1,#2)
+    (#1,0)
+    (!#3 \d\space add \l\space add \d\space add 0)
+    (!#3 \d\space add \l\space add \yb)
+    (!#3 \d\space add \yb)
+    (!#3 0)
+    (0,0)
+\closepath
+     \closedshadow
+}
+}
 % \blockbase{width}{heihgt}{xb}{xh}{color}
 \def\blockbase#1#2#3#4#5{
   \def\d{0.10}
@@ -146,6 +172,22 @@
 }
 
 \makeatletter
+\def\pst at closedshadow{%
+     \addto at pscode{%
+         gsave
+         \psk at shadowsize \psk at shadowangle \tx at PtoC
+         \tx at Shadow
+         \pst at usecolor\psshadowcolor
+         gsave fill grestore
+         stroke
+         grestore%
+     }%
+}
+
+
+
+
+
 \newcommand*{\getlength}[1]{\strip@pt\dimexpr0.035146\dimexpr#1\relax\relax}
 
 \def\field{\@ifstar\@@field\@field}
@@ -160,6 +202,16 @@
 
 
 % \block{color}{text}
+\def\blockevent#1{
+  \settowidth{\myl}{\bfseries#1}
+  \Gscale@div\Y \ypos{1pt}
+  \rput(0,\Y){
+    \blockeventbase{\getlength{\the\myl}}{0.711}{1.01}
+    \psset{shadow=false}
+    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries #1}}
+  }
+  \advance\ypos by -0.772pt
+}
 \def\block#1#2{
   \settowidth{\myl}{\bfseries#2}
   \Gscale@div\Y \ypos{1pt}
@@ -168,7 +220,7 @@
     \psset{shadow=false}
     \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries #2}}
   }
-  \advance\ypos by -0.771pt
+  \advance\ypos by -0.772pt
 }
 \makeatother
 
@@ -180,17 +232,12 @@
 \section{Introduction}
 
 \begin{pspicture}(0,1)(4,-4)%
-  \block{stylo}{Mon texte super long}
-  \block{evenements}{Le texte du bloc \field*{90}}
-  \block{stylo}{Mon texte super \field{12} long}
+  \blockevent{quand ce lutin est cliqué}
+  \block{mouvement}{donner la valeur \field{0} x }
+  \block{stylo}{mon texte super long}
+  \block{evenements}{le texte du bloc \field*{90}}
 \end{pspicture}
 
-\begin{pspicture}(0,1)(4,0)%
-\end{pspicture}%
-
-\begin{pspicture}(0,1)(4,0)%
-  \block{evenements}{Mon texte super longg long}
-\end{pspicture}%
 
 \end{document}
 
