@@ -2,7 +2,7 @@
 % -------------------------------------
 
 % Marges de la page
-\usepackage[left=4cm, right=1cm, top=1.5cm, bottom=1.5cm]{geometry}
+\usepackage[left=1cm, right=1cm, top=1.5cm, bottom=1.5cm]{geometry}
 \setlength{\parindent}{0mm}             % pas de retrait de paragraphe
 
 \usepackage{graphics}
@@ -139,7 +139,7 @@
   \psset{fillcolor=evenements,fillstyle=solid}
   \psset{shadow=true,shadowsize=1pt}
   \rput(0,\Y){
-		\blockeventbase{4}{0.711}{.51}
+    \blockeventbase{4}{0.711}{.51}
     \psset{shadow=false}
     \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries Quand \qquad est cliqué}}
     \rput(1.3,-0.25){\flag}
@@ -246,7 +246,10 @@
 
 \section{Introduction}
 
-\begin{pspicture}(0,1)(4,-4)%
+\noindent
+\begin{minipage}[c]{.65\textwidth}
+\begin{verbatim}
+\begin{pspicture}(0,0)(4,-10)%
   % \blockevent{quand ce lutin est cliqué}
   \blockFlag
   \block{stylo}{mon texte super long}
@@ -256,13 +259,35 @@
       \block{mouvement}{donner la valeur \field{0} à x }
       \block{stylo}{mon texte super long}
       \block{evenements}{le texte du bloc \field*{90}}
-			\blockblank{--- Un texte caché ( pédagogie) ---}
+      \blockblank{--- caché ( pédagogie) ---}
     \end{blockLoop}
     \blockblank{--- xxxxxxx ---}
     \block{stylo}{mon texte super long}
   \end{blockLoop}
   \blockblank{--- xxxxxxxxxxxxx ---}
 \end{pspicture}
+\end{verbatim}
+\end{minipage}% <---------------- Note the use of "%"
+\begin{minipage}[c]{25\textwidth}
+\begin{pspicture}(0,0)(4,-10)%
+  % \blockevent{quand ce lutin est cliqué}
+  \blockFlag
+  \block{stylo}{mon texte super long}
+  \begin{blockLoop}{répéter indéfiniment}
+    \block{stylo}{mon texte super long}
+    \begin{blockLoop}{répéter indéf}
+      \block{mouvement}{donner la valeur \field{0} à x }
+      \block{stylo}{mon texte super long}
+      \block{evenements}{le texte du bloc \field*{90}}
+      \blockblank{--- caché ( pédagogie) ---}
+    \end{blockLoop}
+    \blockblank{--- xxxxxxx ---}
+    \block{stylo}{mon texte super long}
+  \end{blockLoop}
+  \blockblank{--- xxxxxxxxxxxxx ---}
+\end{pspicture}
+\end{minipage}
+
 
 
 \end{document}
