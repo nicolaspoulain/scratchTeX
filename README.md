@@ -16,7 +16,6 @@ Le code
       \begin{blockLoop}{répéter \field{4} fois }
         \block{mouvement}{avancer de \field{100} }
         \block{mouvement}{tourner de \field{90} degrés}
-        % \blockblank{--- caché ( pédagogie) ---}
       \end{blockLoop}
       \block{mouvement}{tourner de \field{1.5} degrés}
       \block{stylo}{ajouter \field{1} à la couleur du stylo}
