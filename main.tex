@@ -28,6 +28,7 @@
 \definecolor{flagcolor}{RGB}{63,141,21}
 
 \newlength{\myl}
+\newlength{\mylen}
 \newcounter{ctr}
 \newcounter{shift}
 \setcounter{shift}{0}
@@ -37,7 +38,7 @@
 % Low level definitions
 %##################################################
 \newdimen\ypos
-\ypos=0pt              % where to draw current block
+\ypos=-0.289pt              % where to draw current block
 % how to calculate with dimen
 % \advance\ypos by 1pt % ypos = ypos + 1
 % \ypos=3\ypos         % ypos = 3 * ypos
@@ -64,15 +65,27 @@
   \def\d{0.10}
   \def\l{0.25}
   \def\yb{-0.1}
-  \pspolygon(0,0)(!#3 0)
-    (!#3 \d\space add \yb)
-    (!#3 \d\space add \l\space add \yb)
-    (!#3 \d\space add \l\space add \d\space add 0)(#1,0)
-    (#1,#2)
-    (!#4 \d\space add \l\space add \d\space add #2)
-    (!#4 \d\space add \l\space add #2 \yb\space add)
-    (!#4 \d\space add #2 \yb\space add)
-    (#4,#2) (0,#2)
+  % \pspolygon(0,0)(!#3 0)
+    % (!#3 \d\space add \yb)
+    % (!#3 \d\space add \l\space add \yb)
+    % (!#3 \d\space add \l\space add \d\space add 0)(#1,0)
+    % (#1,#2)
+    % (!#4 \d\space add \l\space add \d\space add #2)
+    % (!#4 \d\space add \l\space add #2 \yb\space add)
+    % (!#4 \d\space add #2 \yb\space add)
+    % (#4,#2) (0,#2)
+  \pspolygon(!0 1 #2 neg add)
+    (!#3 1 #2 neg add)
+    (!#3 \d\space add 1 #2 neg add \yb\space add)
+    (!#3 \d\space add \l\space add 1 #2 neg add \yb\space add)
+    (!#3 \d\space add \l\space add \d\space add 1 #2 neg add)
+    (!#1 1 #2 neg add)
+    (!#1 1)
+    (!#4 \d\space add \l\space add \d\space add 1)
+    (!#4 \d\space add \l\space add 1 \yb\space add)
+    (!#4 \d\space add 1 \yb\space add)
+    (!#4 1)
+    (!0 1)
 }
 
 \makeatletter
@@ -109,8 +122,9 @@
 \def\vertBlock#1#2{
   \psset{linearc=0,linestyle=none}
   \psset{fillcolor=controle,fillstyle=solid}
-  \psset{shadow=false}
-  \rput(-0.012,0){\pspolygon(0,-0.2)(#1,-0.2)(!#1 #2 0.2 add)(!0 #2 0.2 add)}
+  \psset{shadow=true,shadowsize=1pt,shadowangle=-45}
+  % \rput(-0.012,0){\pspolygon(0,-0.2)(#1,-0.2)(!#1 #2 0.2 add)(!0 #2 0.2 add)}
+  \rput(0,0.289){\pspolygon(0,-0.2)(#1,-0.2)(!#1 #2 0.07 add)(!0 #2 0.07 add)}
 }
 
 
@@ -121,7 +135,7 @@
   \psset{linearc=0.05,linestyle=none}
   \psset{fillcolor=evenements,fillstyle=solid}
   \psset{shadow=true,shadowsize=1pt}
-  \rput(0,\Y){
+  \rput(0,0){
     \blockeventbase{\getlength{\the\myl}}{0.711}{.51}
     \psset{shadow=false}
     \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries #1}}
@@ -138,22 +152,23 @@
   \psset{linearc=0.05,linestyle=none}
   \psset{fillcolor=evenements,fillstyle=solid}
   \psset{shadow=true,shadowsize=1pt}
-  \rput(0,\Y){
+  \rput(0,0){
     \blockeventbase{4}{0.711}{.51}
     \psset{shadow=false}
-    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries Quand \qquad est cliqué}}
-    \rput(1.3,-0.25){\flag}
+    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries quand \qquad est cliqué}}
+    \rput(1.2,-0.25){\flag}
   }
   \advance\ypos by -0.772pt % block height + a little bit
 }
 %----------------------------- \blockblank{text}
+\def\vertWidth{0.5}
 \def\blockblank#1{
   \settowidth{\myl}{\bfseries#1}
   \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
   \setcounter{ctr}{\theshift}
   \loop
     \ifnum\theshift>0
-      \rput(!\thectr\space -1 add 0.65 mul \Y){\vertBlock{0.6}{0.711}}
+      \rput(!\thectr\space -1 add \vertWidth\space 0.05 add mul \Y){\vertBlock{\vertWidth}{0.711}}
     \fi
     \addtocounter{ctr}{-1}
     \ifnum\thectr>0
@@ -161,10 +176,10 @@
   \psset{linearc=0.05,linestyle=solid}
   \psset{fillstyle=none}
   \psset{shadow=false,shadowsize=1pt}
-  \rput(!\theshift\space 0.65 mul \Y){
+  \rput(!\theshift\space \vertWidth\space 0.05 add mul \Y){
     \blockbase{\getlength{\the\myl}}{0.711}{0.5}{.51}
     \psset{shadow=false}
-    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries 1}}
+    \uput[0](!0 2 -0.711 add 2.1 div){\color{white}\textsf{\bfseries 1}}
   }
   \advance\ypos by -0.752pt % block height + a little bit
 }
@@ -175,7 +190,7 @@
   \setcounter{ctr}{\theshift}
   \loop
     \ifnum\theshift>0
-      \rput(!\thectr\space -1 add 0.65 mul \Y){\vertBlock{0.6}{0.711}}
+      \rput(!\thectr\space -1 add \vertWidth\space 0.05 add mul \Y){\vertBlock{\vertWidth}{0.711}}
     \fi
     \addtocounter{ctr}{-1}
     \ifnum\thectr>0
@@ -183,10 +198,10 @@
   \psset{linearc=0.05,linestyle=none}
   \psset{fillcolor=#1,fillstyle=solid}
   \psset{shadow=true,shadowsize=1pt}
-  \rput(!\theshift\space 0.65 mul \Y){
+  \rput(!\theshift\space \vertWidth\space 0.05 add mul \Y){
     \blockbase{\getlength{\the\myl}}{0.711}{0.5}{.51}
     \psset{shadow=false}
-    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries #2}}
+    \uput[0](!0 2 -0.711 add 2.1 div){\color{white}\textsf{\bfseries #2}}
   }
   \advance\ypos by -0.772pt % block height + a little bit
 }
@@ -194,12 +209,12 @@
 \newcounter{nbloop}
 \setcounter{nbloop}{0}
 \newenvironment{blockLoop}[1]{
-  \settowidth{\myl}{\bfseries#1}
+  \settowidth{\mylen}{\bfseries#1}
   \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
   \setcounter{ctr}{\theshift}
   \loop
     \ifnum\theshift>0
-      \rput(!\thectr\space -1 add 0.65 mul \Y){\vertBlock{0.6}{0.711}}
+      \rput(!\thectr\space -1 add \vertWidth\space 0.05 add mul \Y){\vertBlock{\vertWidth}{0.711}}
     \fi
     \addtocounter{ctr}{-1}
     \ifnum\thectr>0
@@ -207,21 +222,20 @@
   \psset{linearc=0.05,linestyle=none}
   \psset{fillcolor=controle,fillstyle=solid}
   \psset{shadow=true,shadowsize=1pt}
-  \rput(!\theshift\space 0.65 mul \Y){
-    \blockbase{\getlength{\the\myl}}{0.711}{1.15}{0.51}
+  \rput(!\theshift\space \vertWidth\space 0.05 add mul \Y){
+    \blockbase{\getlength{\the\mylen}}{0.711}{1.05}{0.51}
     \psset{shadow=false}
-    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries #1}}
+    \uput[0](!0 2 -0.711 add 2.1 div){\color{white}\textsf{\bfseries #1}}
   }
   \advance\ypos by -0.772pt % block height + a little bit
   \addtocounter{shift}{1}
 }{
-  \settowidth{\myl}{bfseriesqqsqsqsqs}
   \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
   \addtocounter{shift}{-1}
   \setcounter{ctr}{\theshift}
   \loop
     \ifnum\theshift>0
-      \rput(!\thectr\space -1 add 0.65 mul \Y){\vertBlock{0.6}{0.711}}
+      \rput(!\thectr\space -1 add \vertWidth\space 0.05 add mul \Y){\vertBlock{\vertWidth}{0.711}}
     \fi
     \addtocounter{ctr}{-1}
     \ifnum\thectr>0
@@ -229,12 +243,12 @@
   \psset{linearc=0.05,linestyle=none}
   \psset{fillcolor=controle,fillstyle=solid}
   \psset{shadow=true,shadowsize=1pt}
-  \rput(!\theshift\space 0.65 mul \Y){
-    \blockbase{\getlength{\the\myl}}{0.711}{0.5}{1.16}
+  \rput(!\theshift\space \vertWidth\space 0.05 add mul \Y){
+    \blockbase{\getlength{\the\mylen}}{0.451}{0.5}{1.05}
     \psset{shadow=false}
-    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries up}}
+    \rput{-90}(!\getlength{\the\mylen} -0.3 add 2 -0.451 add 2.1 div){\color{white}\textsf{$\mathbf{\Lsh}$}}
   }
-  \advance\ypos by -0.772pt % block height + a little bit
+  \advance\ypos by -0.512pt % block height + a little bit
   \global\ypos=\ypos
 }
 \makeatother
@@ -251,16 +265,15 @@
 \begin{verbatim}
 \begin{pspicture}(0,0)(4,-10)%
   \blockFlag
-  \block{stylo}{mon texte super long}
+  \block{stylo}{mon texte super super SUPER long}
   \begin{blockLoop}{répéter indéfiniment}
-    \block{stylo}{mon texte super long}
-    \begin{blockLoop}{répéter indéf}
+    \block{stylo}{montrer\quad}
+    \begin{blockLoop}{répéter \field{10} fois }
       \block{mouvement}{donner la valeur \field{0} à x }
       \block{stylo}{mon texte super long}
       \block{evenements}{le texte du bloc \field*{90}}
       \blockblank{--- caché ( pédagogie) ---}
     \end{blockLoop}
-    \blockblank{--- xxxxxxx ---}
     \block{stylo}{mon texte super long}
   \end{blockLoop}
   \blockblank{--- xxxxxxxxxxxxx ---}
@@ -271,19 +284,20 @@
 \begin{pspicture}(0,0)(4,-10)%
   % \blockevent{quand ce lutin est cliqué}
   \blockFlag
-  \block{stylo}{mon texte super long}
-  \begin{blockLoop}{répéter indéfiniment}
-    \block{stylo}{mon texte super long}
-    \begin{blockLoop}{répéter indéf}
-      \block{mouvement}{donner la valeur \field{0} à x }
-      \block{stylo}{mon texte super long}
-      \block{evenements}{le texte du bloc \field*{90}}
-      \blockblank{--- caché ( pédagogie) ---}
+  \block{mouvement}{s'orienter à \field*{90} degrés}
+  \block{stylo}{effacer tout }
+  \block{stylo}{stylo en position d'écriture}
+  \block{stylo}{mettre la taille du stylo à \field{1}}
+  \begin{blockLoop}{répéter \field{240} fois }
+    \begin{blockLoop}{répéter \field{4} fois }
+      \block{mouvement}{avancer de \field{100} }
+      \block{mouvement}{tourner de \field*{90} degrés}
+      % \blockblank{--- caché ( pédagogie) ---}
     \end{blockLoop}
-    \blockblank{--- xxxxxxx ---}
-    \block{stylo}{mon texte super long}
+    \block{mouvement}{tourner de \field{1.5} degrés}
+    \block{stylo}{ajouter \field{1} à la couleur du stylo}
   \end{blockLoop}
-  \blockblank{--- xxxxxxxxxxxxx ---}
+  % \blockblank{--- xxxxxxxxxxxxx ---}
 \end{pspicture}
 \end{minipage}
 

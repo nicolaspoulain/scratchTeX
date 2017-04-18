@@ -1,6 +1,6 @@
-Screenshots
+Des algorithmes Scratch En LaTeX
 ------------
-This figure is below a real shot after I configured vim.
-![enter image description here](scratchTeX/example.png)
 
-Installation
+Voici un exemple de résultat
+
+![enter image description here](https://raw.githubusercontent.com/nicolaspoulain/scratchTeX/master/example.png)
