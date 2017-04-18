@@ -119,47 +119,30 @@
 
 
 %##################################################
+% Low level definitions
 %##################################################
-\newdimen\ypos
-\ypos=0pt
-% \advance\ypos by 1pt
-% \ypos=3\ypos
-
-
 % \blockeventbase{width}
 \def\blockeventbase#1#2#3{
-  % \def\y{0.511}
-  % \def\xb{1}
   \def\d{0.10}
   \def\l{0.25}
   \def\yb{-0.1}
-  \psset{linearc=0.05,linestyle=none}
-  \psset{fillcolor=evenements,fillstyle=solid}
-  \psset{shadow=true,shadowsize=1pt}
   \pscustom{%
   \psline(0,0)(0,#2)
   \psellipticarc(!1.19 #2 -0.19 add)(1.3,0.5){10}{170}
-  \psline
-    (2.6,#2)
-    (#1,#2)
-    (#1,0)
+  \psline(2.6,#2)(#1,#2)(#1,0)
     (!#3 \d\space add \l\space add \d\space add 0)
     (!#3 \d\space add \l\space add \yb)
     (!#3 \d\space add \yb)
-    (!#3 0)
-    (0,0)
-\closepath
-     \closedshadow
+    (!#3 0)(0,0)
+   \closepath
+   \closedshadow
 }
 }
-% \blockbase{width}{heihgt}{xb}{xh}{color}
-\def\blockbase#1#2#3#4#5{
+% \blockbase{width}{heihgt}{xb}{xh}
+\def\blockbase#1#2#3#4{
   \def\d{0.10}
   \def\l{0.25}
   \def\yb{-0.1}
-  \psset{linearc=0.05,linestyle=none}
-  \psset{fillcolor=#5,fillstyle=solid}
-  \psset{shadow=true,shadowsize=1pt}
   \pspolygon(0,0)(!#3 0)
     (!#3 \d\space add \yb)
     (!#3 \d\space add \l\space add \yb)
@@ -173,21 +156,24 @@
 
 \makeatletter
 \def\pst at closedshadow{%
-     \addto at pscode{%
-         gsave
-         \psk at shadowsize \psk at shadowangle \tx at PtoC
-         \tx at Shadow
-         \pst at usecolor\psshadowcolor
-         gsave fill grestore
-         stroke
-         grestore%
-     }%
+  \addto at pscode{%
+    gsave
+    \psk at shadowsize \psk at shadowangle \tx at PtoC
+    \tx at Shadow
+    \pst at usecolor\psshadowcolor
+    gsave fill grestore
+    stroke
+    grestore%
+  }%
 }
+\makeatother
+
+%##################################################
+% higher level definitions
+%##################################################
 
 
-
-
-
+\makeatletter
 \newcommand*{\getlength}[1]{\strip@pt\dimexpr0.035146\dimexpr#1\relax\relax}
 
 \def\field{\@ifstar\@@field\@field}
@@ -200,27 +186,53 @@
     \color{black}\normalfont{\textsf{#1}}$^\blacktriangledown$%
 }}
 
+\newdimen\ypos
+\ypos=0pt              % where to draw current block
+% how to calculate with dimen
+% \advance\ypos by 1pt % ypos = ypos + 1
+% \ypos=3\ypos         % ypos = 3 * ypos
 
-% \block{color}{text}
+%----------------------------- \blockevent{text}
 \def\blockevent#1{
   \settowidth{\myl}{\bfseries#1}
-  \Gscale@div\Y \ypos{1pt}
+  \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
+  \psset{linearc=0.05,linestyle=none}
+  \psset{fillcolor=evenements,fillstyle=solid}
+  \psset{shadow=true,shadowsize=1pt}
   \rput(0,\Y){
-    \blockeventbase{\getlength{\the\myl}}{0.711}{1.01}
+    \blockeventbase{\getlength{\the\myl}}{0.711}{.51}
     \psset{shadow=false}
     \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries #1}}
   }
-  \advance\ypos by -0.772pt
+  \advance\ypos by -0.772pt % block height + a little bit
 }
+%----------------------------- \block{color}{text}
+\def\blockblank#1{
+  \settowidth{\myl}{\bfseries#1}
+  \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
+  \psset{linearc=0.05,linestyle=solid}
+  \psset{fillcolor=white,fillstyle=solid}
+  \psset{shadow=false,shadowsize=1pt}
+  \rput(0,\Y){
+    \blockbase{\getlength{\the\myl}}{0.711}{0.5}{.51}
+    \psset{shadow=false}
+    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries 1}}
+  }
+  \advance\ypos by -0.752pt % block height + a little bit
+}
+%----------------------------- \block{color}{text}
 \def\block#1#2{
   \settowidth{\myl}{\bfseries#2}
-  \Gscale@div\Y \ypos{1pt}
+  \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
+  \psset{linearc=0.05,linestyle=none}
+  \psset{fillcolor=#1,fillstyle=solid}
+  \psset{shadow=true,shadowsize=1pt}
   \rput(0,\Y){
-    \blockbase{\getlength{\the\myl}}{0.711}{1}{1.01}{#1}
+    \blockbase{\getlength{\the\myl}}{0.711}{0.5}{.51}
     \psset{shadow=false}
     \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries #2}}
   }
-  \advance\ypos by -0.772pt
+  \advance\ypos by -0.772pt % block height + a little bit
 }
 \makeatother
 
@@ -233,24 +245,12 @@
 
 \begin{pspicture}(0,1)(4,-4)%
   \blockevent{quand ce lutin est cliqué}
-  \block{mouvement}{donner la valeur \field{0} x }
+  \block{mouvement}{donner la valeur \field{0} à x }
   \block{stylo}{mon texte super long}
+  \blockblank{ioioioiioio texte super long}
+  \blockblank{ioioioiioio texte super long}
+  \blockblank{ioioioiioio texte super long}
   \block{evenements}{le texte du bloc \field*{90}}
 \end{pspicture}
 
-
 \end{document}
-
-% \begin{pspicture}(0,0)(4,-17)%
-  % \begin{boucle}{controle}{répéter \field{11} fois}
-    % \bloc{donnees}{donnees}
-    % \bloc{evenements}{evenements}
-    % \begin{boucle}{controle}{répéter \field{2} fois}
-      % \bloc{mouvement}{mouvement \field{10}}
-      % \bloc{apparence}{apparence \field*{90}}
-      % \begin{boucle}{controle}{répéter indéfiniment}
-        % \bloc{stylo}{stylo}
-      % \end{boucle}
-    % \end{boucle}
-  % \end{boucle}
-% \end{pspicture}%
