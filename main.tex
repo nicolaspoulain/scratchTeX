@@ -32,20 +32,6 @@
 \newcounter{shift}
 \setcounter{shift}{0}
 
-\def\flag{%
-\psset{linearc=.05,fillcolor=controle,fillstyle=solid,linestyle=none}
-\pspolygon(0,0)(.5,0)(.5,0.95)(0,0.95)
-\pspolygon(.4,0)(.52,0)(.62,-.15)(.88,-.15)(.98,0)(1.1,0)(1.1,0.95)(1,0.95)(.9,.8)(.6,.8)(.5,0.95)(.4,0.95)
-\pspolygon(1,0)(5,0)(5,0.95)(1,0.95)
-\uput[0](0,0.5){\color{white}\textsf{\bfseries quand  \qquad  est cliqué}}
-\rput(1.15,-0.15){\pspolygon[linearc=0,linewidth=2pt,linecolor=flagcolor,linestyle=solid,fillcolor=flagcolor,fillstyle=solid](0.082,0.43)(0.2,0.95)(0.3,0.9)(0.4,0.88)(0.5,0.88)(0.7,0.92)(0.7,0.65)(0.5,0.6)(0.4,0.6)(0.3,0.65)(0.14,0.69)}
-\rput(1,-0.3){
-\pscustom[linestyle=none]{%
-\psline(-1,1)(1,1)
-\psellipticarc(0,1)(1,0.5){0}{180}
-\fill}}
-}
-
 
 %##################################################
 % Low level definitions
@@ -139,6 +125,24 @@
     \blockeventbase{\getlength{\the\myl}}{0.711}{.51}
     \psset{shadow=false}
     \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries #1}}
+  }
+  \advance\ypos by -0.772pt % block height + a little bit
+}
+
+\def\flag{%
+\pspolygon[unit=0.9,linearc=0,linewidth=2pt,linecolor=flagcolor,linestyle=solid,fillcolor=flagcolor,fillstyle=solid](0.082,0.43)(0.2,0.95)(0.3,0.9)(0.4,0.88)(0.5,0.88)(0.7,0.92)(0.7,0.65)(0.5,0.6)(0.4,0.6)(0.3,0.65)(0.14,0.69)
+}
+%----------------------------- \blockFlag
+\def\blockFlag{
+  \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
+  \psset{linearc=0.05,linestyle=none}
+  \psset{fillcolor=evenements,fillstyle=solid}
+  \psset{shadow=true,shadowsize=1pt}
+  \rput(0,\Y){
+		\blockeventbase{4}{0.711}{.51}
+    \psset{shadow=false}
+    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries Quand \qquad est cliqué}}
+    \rput(1.3,-0.25){\flag}
   }
   \advance\ypos by -0.772pt % block height + a little bit
 }
@@ -243,7 +247,8 @@
 \section{Introduction}
 
 \begin{pspicture}(0,1)(4,-4)%
-  \blockevent{quand ce lutin est cliqué}
+  % \blockevent{quand ce lutin est cliqué}
+  \blockFlag
   \block{stylo}{mon texte super long}
   \begin{blockLoop}{répéter indéfiniment}
     \block{stylo}{mon texte super long}
@@ -251,7 +256,7 @@
       \block{mouvement}{donner la valeur \field{0} à x }
       \block{stylo}{mon texte super long}
       \block{evenements}{le texte du bloc \field*{90}}
-			\blockblank{--- Un texte caché (pédagogie) ---}
+			\blockblank{--- Un texte caché ( pédagogie) ---}
     \end{blockLoop}
     \blockblank{--- xxxxxxx ---}
     \block{stylo}{mon texte super long}
