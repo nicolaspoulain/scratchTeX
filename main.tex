@@ -122,7 +122,7 @@
 % Low level definitions
 %##################################################
 \newdimen\ypos
-\ypos=0pt              % where to draw current block
+\global\ypos=0pt              % where to draw current block
 % how to calculate with dimen
 % \advance\ypos by 1pt % ypos = ypos + 1
 % \ypos=3\ypos         % ypos = 3 * ypos
@@ -195,7 +195,7 @@
   \psset{linearc=0,linestyle=none}
   \psset{fillcolor=controle,fillstyle=solid}
   \psset{shadow=false}
-	\rput(-0.01,0){\pspolygon(0,-0.2)(#1,-0.2)(!#1 #2 0.2 add)(!0 #2 0.2 add)}
+	\rput(-0.012,0){\pspolygon(0,-0.2)(#1,-0.2)(!#1 #2 0.2 add)(!0 #2 0.2 add)}
 }
 
 
@@ -300,29 +300,14 @@
 \begin{pspicture}(0,1)(4,-4)%
   % \blockevent{quand ce lutin est cliqué}
 	\blockevent{quand ce lutin est cliqué}
-	\blockBegin{blockBegin yes}
+	\blockBegin{répéter indéfiniment}
 	\block{mouvement}{donner la valeur \field{0} à x }
-	\blockblank{ioioioiioio texte super long}
+	\block{stylo}{mon texte super long}
 	\block{evenements}{le texte du bloc \field*{90}}
+	\blockblank{xxxxxxxxxxxxxx}
 	\blockEnd
-	\blockblank{ioioioiioio texte super long}
-		% \block{stylo}{mon texte super long}
-	\block{evenements}{ioioioing}
-  % \blockblank{ioioioiioio texte super long}
-  % \blockblank{ioioioiioio texte super long}
-  % \block{evenements}{le texte du bloc \field*{90}}
+	\blockblank{xxxxxxxxxxxxxx}
 \end{pspicture}
 
-\begin{pspicture}(0,5)(4,-4)%
-	\blockblank{ioioioiioio texte super long}
-	\blockblank{ioioioiioio texte super long}
-	\blockblank{ioiioio texte super long}
-	\blockblank{ioioioiioio texte super long}
-		% \block{stylo}{mon texte super long}
-	\blockblank{ioioioing}
-  % \blockblank{ioioioiioio texte super long}
-  % \blockblank{ioioioiioio texte super long}
-  % \block{evenements}{le texte du bloc \field*{90}}
-\end{pspicture}
 
 \end{document}
