@@ -32,9 +32,6 @@
 
 \makeatletter
 
-\usepackage{pgf}
-\newcommand*{\getlength}[2]{\pgfmathsetmacro#1{round(3.51459804*#2)/100.0}}
-%\newcommand*{\getlength}[1]{\strip@pt\dimexpr0.035146\dimexpr#1\relax\relax}
 
 \def\field{\@ifstar\@@field\@field}
 \newcommand{\@field}[1]{%
@@ -133,44 +130,70 @@
 }
 
 
+%##################################################
+%##################################################
+\newdimen\ypos
+\ypos=0pt
+% \advance\ypos by 1pt
+% \ypos=3\ypos
+
+
+% \blockbase{width}{heihgt}{xb}{xh}{color}
+\def\blockbase#1#2#3#4#5{
+  \def\d{0.10}
+  \def\l{0.25}
+  \def\yb{-0.1}
+  \psset{linearc=0.05,linestyle=none}
+  \psset{fillcolor=#5,fillstyle=solid}
+  \psset{shadow=true,shadowsize=1pt}
+  \pspolygon(0,0)(!#3 0)
+    (!#3 \d\space add \yb)
+    (!#3 \d\space add \l\space add \yb)
+    (!#3 \d\space add \l\space add \d\space add 0)(#1,0)
+    (#1,#2)
+    (!#4 \d\space add \l\space add \d\space add #2)
+    (!#4 \d\space add \l\space add #2 \yb\space add)
+    (!#4 \d\space add #2 \yb\space add)
+    (#4,#2) (0,#2)
+}
+
+\makeatletter
+\newcommand*{\getlength}[1]{\strip@pt\dimexpr0.035146\dimexpr#1\relax\relax}
+
+\usepackage{graphics}
+
+% \block{color}{text}
+\def\block#1#2{
+  \settowidth{\myl}{\bfseries#2}
+  \Gscale@div\Y \ypos{1pt}
+  \rput(0,\Y){
+    \blockbase{\getlength{\the\myl}}{0.711}{1}{1.02}{#1}
+    \uput[0](!0 0.711 2.3 div){\color{white}\textsf{\bfseries #2}}
+  }
+  \advance\ypos by -0.811pt
+}
+\makeatother
+
+
+
 
 \begin{document}
 
 \section{Introduction}
 
+\begin{pspicture}(0,1)(4,-4)%
+  \block{evenements}{Le texte du bloc}
+  \block{stylo}{Mon texte super longg longMon texte super longg long}
+  \block{stylo}{Mon texte super longg longMon texte super longg long}
+\end{pspicture}
 
-    % \bloc{controle}{controle}
-    % \bloc{mouvement}{mouvement}
-    % \bloc{apparence}{apparence}
-    % \bloc{sons}{sons}
-    % \bloc{stylo}{stylo}
-    % \bloc{capteurs}{capteurs}
-    % \bloc{operateurs}{operateurs}
-    % \bloc{ajouterblocs}{ajouterblocs}
-
-% \begin{pspicture}(0,0)(4,6)%
-  % \psset{unit=3}
-  % \pspolygon[linewidth=2pt,linecolor=green,fillcolor=green,fillstyle=solid](0.08,0.4)(0.2,1)(0.2,0.95)(0.3,0.9)(0.4,0.88)(0.5,0.88)(0.7,0.92)(0.7,0.65)(0.5,0.6)(0.4,0.6)(0.3,0.65)(0.14,0.69)
-% \end{pspicture}%
-
-
-mmm
-
-
-\begin{pspicture}(0,0)(4,-17)%
-    \drapeau
-    \bloc{stylo}{effacer tout}
-    \bloc{stylo}{stylo en position d'écriture}
-    \bloc{stylo}{mettre la taille du stylo à \field{1}}
-    \begin{boucle}{répéter \field{240} fois}
-      \begin{boucle}{répéter \field{4} fois}
-        \bloc{mouvement}{avancer de \field{100}}
-        \bloc{mouvement}{tourner de \field*{90} degrés}
-      \end{boucle}
-      \bloc{mouvement}{tourner de \field{1.5} degrés}
-      \bloc{stylo}{ajouter \field{1} à la couleur du stylo}
-    \end{boucle}
+\begin{pspicture}(0,1)(4,0)%
 \end{pspicture}%
+
+\begin{pspicture}(0,1)(4,0)%
+  \block{evenements}{Mon texte super longg long}
+\end{pspicture}%
+
 \end{document}
 
 % \begin{pspicture}(0,0)(4,-17)%
