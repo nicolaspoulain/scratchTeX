@@ -1,7 +1,20 @@
-Des algorithmes Scratch En LaTeX
+Des algorithmes Scratch en LaTeX
 ------------
 
-Voici un exemple de résultat
+Le but de ce travail est de fournir un environnement permettant de
+produire avec une syntaxe simple des algorithmes Scratch.
+
+Plutôt qu'inclure des copies d'écran de scratch, il est plus propre et plus
+pratique d'inclure des algorithmes constitués de blocs décrits par un texte
+modifiable.
+
+Sur le site Melusine, on trouve un excellent travail permettant de produire de
+tels algorithmes en Metapost : http://melusine.eu.org/syracuse/G/mp-scratch/
+
+Ici, c'est PSTricks qui est utilisé car c'est le langage graphique utilisé par
+l'APMEP, ce qui en fait (selon moi) une référence.
+
+Voici un exemple de résultat et le code correspondant, ci-dessous.
 
 ![enter image description here](https://raw.githubusercontent.com/nicolaspoulain/scratchTeX/master/example.png)
 
