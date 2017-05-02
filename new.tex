@@ -1,0 +1,71 @@
+\documentclass[a4paper,0.952pt]{article}
+% -------------------------------------
+
+% Marges de la page
+\usepackage[left=1cm, right=1cm, top=1.5cm, bottom=1.5cm]{geometry}
+\setlength{\parindent}{0mm}             % pas de retrait de paragraphe
+
+\usepackage{pst-all}
+\usepackage{amsfonts, amsmath, amssymb}
+\usepackage[frenchb]{babel}             % règles françaises de typo
+\usepackage{fontspec}                   % pour fontes spéciales utilisé par babel
+
+\usepackage{color}
+\definecolor{mouvement}{RGB}{74,108,212}
+\definecolor{apparence}{RGB}{138,85,215}
+\definecolor{sons}{RGB}{187,66,195}
+\definecolor{stylo}{RGB}{14,154,108}
+\definecolor{donnees}{RGB}{238,125,22}
+\definecolor{evenements}{RGB}{200,131,48}
+\definecolor{controle}{RGB}{225,169,26}
+\definecolor{capteurs}{RGB}{44,165,226}
+\definecolor{operateurs}{RGB}{92,183,18}
+\definecolor{ajouterblocs}{RGB}{99,45,153}
+\definecolor{flagcolor}{RGB}{63,141,21}
+
+\newlength{\myl}
+\newlength{\mylen}
+\newcounter{ctr}
+\newcounter{shift}
+\setcounter{shift}{0}
+
+\def\blockbase#1#2#3#4#5{
+  % \blockbase w h a b z
+  %
+  %  (0,0)___a   ________________(w,0)
+  %      |   \__/                |
+  %      |      (a+d+l,b)        |
+  %      |  z__b   ______________|
+  % (0,-h)     \__/              (w,-h)
+  %               (b+d+l,b-#2)
+  %
+  \def\b{-0.1} % height of \ (part of \_/ )
+  \def\d{0.1}  % width  of \ (part of \_/ )
+  \def\l{0.25} % width  of _ (part of \_/ )
+  \psline(!0 #2 neg) % (0,-h)
+    (!0 0)           % (0,0)
+    (!#3 0)                                         % (a,0)
+    (!#3 \d\space add \b)                           % (a+d,b)
+    (!#3 \d\space add \l\space add \b)              % (a+d+l,b)
+    (!#3 \d\space dup add add \l\space add 0)       % (a+2d+l,0)
+    (!#1 0)          % (w,0)
+    (!#1 #2 neg)     % (w,-h)
+    (!#4 \d\space dup add add \l\space add #2 neg)  % (b+2d+l,-h)
+    (!#4 \d\space add \l\space add \b\space #2 sub) % (b+d+l,b-h)
+    (!#4 \d\space add \b\space #2 sub)              % (b+d,b-h)
+    (!#4 #2 neg)                                    % (b,-h)
+    (!#5 #2 neg)     % (z,-h)
+}
+
+\begin{document}
+
+\section{Introduction}
+
+\begin{pspicture}(0,2)(4,-10)%
+  \blockbase{6}{0.711}{0.5}{0.51}{0.3}
+\end{pspicture}
+
+
+
+\end{document}
+
