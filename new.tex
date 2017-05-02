@@ -29,40 +29,71 @@
 \newcounter{shift}
 \setcounter{shift}{0}
 
-\def\blockbase#1#2#3#4#5{
-  % \blockbase w h a b z
+\def\blockbase#1#2#3#4#5#6#7{
+  % \blockbase w h a b z x y
   %
-  %  (0,0)___a   ________________(w,0)
-  %      |   \__/                |
-  %      |      (a+d+l,b)        |
-  %      |  z__b   ______________|
-  % (0,-h)     \__/              (w,-h)
-  %               (b+d+l,b-#2)
+  %  (x,y)___x+a  ________________(x+w,y)
+  %      |   \___/                |
+  %      |       (x+a+d+l,y+b)    |
+  %      | x+z__x+b  _____________|
+  %(x,y-h)      \___/             (x+w,y-h)
+  %                 (b+d+l,y+b-h)
   %
   \def\b{-0.1} % height of \ (part of \_/ )
   \def\d{0.1}  % width  of \ (part of \_/ )
   \def\l{0.25} % width  of _ (part of \_/ )
-  \psline(!0 #2 neg) % (0,-h)
-    (!0 0)           % (0,0)
-    (!#3 0)                                         % (a,0)
-    (!#3 \d\space add \b)                           % (a+d,b)
-    (!#3 \d\space add \l\space add \b)              % (a+d+l,b)
-    (!#3 \d\space dup add add \l\space add 0)       % (a+2d+l,0)
-    (!#1 0)          % (w,0)
-    (!#1 #2 neg)     % (w,-h)
-    (!#4 \d\space dup add add \l\space add #2 neg)  % (b+2d+l,-h)
-    (!#4 \d\space add \l\space add \b\space #2 sub) % (b+d+l,b-h)
-    (!#4 \d\space add \b\space #2 sub)              % (b+d,b-h)
-    (!#4 #2 neg)                                    % (b,-h)
-    (!#5 #2 neg)     % (z,-h)
+  \psline(!#6 #7 #2 sub) % (x,y-h)
+  (!#6 #7)               % (x,y)
+  (!#6 #3 add #7)                                        % (x+a,y)
+  (!#6 #3 add \d\space add \b\space #7 add)              % (x+a+d,y+b)
+  (!#6 #3 add \d\space add \l\space add \b\space #7 add) % (x+a+d+l,y+b)
+  (!#6 #3 add \d\space dup add add \l\space add #7)      % (x+a+2d+l,y)
+  (!#6 #1 add #7)        % (x+w,y)
+  (!#6 #1 add #7 #2 sub) % (x+w,y-h)
+  (!#6 #4 add \d\space dup add add \l\space add #7 #2 sub)     % (x+b+2d+l,y-h)
+  (!#6 #4 add \d\space add \l\space add \b\space #2 sub #7 add)% (x+b+d+l,y+b-h)
+  (!#6 #4 add \d\space add \b\space #2 sub #7 add)             % (x+b+d,y+b-h)
+  (!#6 #4 add #7 #2 sub)                                       % (x+b,y-h)
+  (!#6 #5 add #7 #2 sub) % (x+z,y-h)
 }
+\def\blockend#1#2#3#4#5#6{
+  % \blockend w h b z x y
+  %
+  %  (x,y)  x+z___________________(x+w,y)
+  %      |                        |
+  %      |_____x+b  ______________|
+  %(x,y-h)     \___/              (x+w,y-h)
+  %               (x+b+d+l,y+b-h)
+  %
+  \def\b{-0.1} % height of \ (part of \_/ )
+  \def\d{0.1}  % width  of \ (part of \_/ )
+  \def\l{0.25} % width  of _ (part of \_/ )
+  \psline(!#5 #4 add 0 #6 add)     % (z,0)
+  (!#5 #1 add 0 #6 add)          % (w,0)
+  (!#5 #1 add #2 neg #6 add)     % (w,-h)
+  (!#5 #3 add \d\space dup add add \l\space add #2 neg #6 add)  % (b+2d+l,-h)
+  (!#5 #3 add \d\space add \l\space add \b\space #2 sub #6 add) % (b+d+l,b-h)
+  (!#5 #3 add \d\space add \b\space #2 sub #6 add)              % (b+d,b-h)
+  (!#5 #3 add #2 neg #6 add)                                    % (b,-h)
+  (!#5 0 add #2 neg #6 add) % (0,-h)
+  (!#5 0 add 0 #6 add)           % (0,0)
+}
+
+
 
 \begin{document}
 
 \section{Introduction}
 
 \begin{pspicture}(0,2)(4,-10)%
-  \blockbase{6}{0.711}{0.5}{0.51}{0.3}
+  \pscustom[fillstyle=solid,fillcolor=lightgray]{%
+    \blockbase{6}{0.711}{0.5}{0.51}{0.3}{0}{0}
+    \blockend{6}{0.411}{0.5}{0.3}{0}{-1.5}
+                                        }
+  \pscustom[fillstyle=solid,fillcolor=lightgray]{%
+    \blockbase{6}{0.711}{0.5}{0.51}{0.3}{0}{-3}
+    \blockend{6}{0.411}{0.5}{0.3}{0}{-5.5}
+                                        }
 \end{pspicture}
 
 
