@@ -79,15 +79,26 @@
   (!#5 0 add #2 neg #6 add) % (0,-h)
   (!#5 0 add 0 #6 add)           % (0,0)
 }
-
 \newdimen\mylen
 \newdimen\xshift
 \xshift=0pt       % pt will be removed : value is xunit
 \newdimen\yshift
 \yshift=0pt  % pt will be removed : value is yunit
-
 \makeatletter
 \newcommand*{\getlength}[1]{\strip@pt\dimexpr0.035146\dimexpr#1\relax\relax}
+\def\pst at closedshadow{%
+  \addto at pscode{%
+    gsave
+    \psk at shadowsize \psk at shadowangle \tx at PtoC
+    \tx at Shadow
+    \pst at usecolor\psshadowcolor
+    gsave fill grestore
+    stroke
+    grestore%
+  }%
+}
+\gdef\make@neName#1#2#3{\expandafter\edef\csname#1\romannumeral#2\endcsname{#3}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                            \field{text}                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,29 +132,23 @@
   \settowidth{\mylen}{\bfseries#1}
   \psset{linearc=0.05,linestyle=solid,linewidth=1pt}
   \psset{fillstyle=none}
-  % \psset{fillcolor=white,fillstyle=solid}
-  \psset{shadow=true,shadowsize=1pt}
-  \rput(!\strip@pt\xshift\space \strip@pt\yshift){
-  % \blockbase w h a b z x y
-    \blockbase{\getlength{\the\mylen}}{0.811}{0.5}{.51}{0}{0}{0}
-  }
+  \psset{fillcolor=white,fillstyle=solid}
+  \blockbase{\getlength{\the\mylen}}{0.811}{0.5}{.51}{0}{\strip@pt\xshift}{\strip@pt\yshift}
   \advance\yshift by -0.872pt % block height + a little bit
 }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                           loopBlock{text}                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \def\bloop#1{
-  \newcount\n
-  \n=#1
+  \newcount\n \n=#1
   \expandafter\make@neName{ypos}{\number\n}{\the\yshift}
   \advance\xshift by 0.342pt  % block width  + a little bit
   \advance\yshift by -0.772pt % block height + a little bit
-   \mylen=\expandafter\csname ypos\expandafter\romannumeral\n\endcsname
-   % ** \the\mylen **
 }
 \def\eloop#1{
-  \newcount\n
-  \n=#1
+  \newcount\n \n=#1
   \mylen=\expandafter\csname ypos\expandafter\romannumeral\n\endcsname
   \advance\xshift by -0.342pt  % block width  + a little bit
-   % --- \strip@pt\mylen ---
   \psset{linearc=0.05,linestyle=none}
   \psset{fillcolor=controle,fillstyle=solid}
   \psset{shadow=true,shadowsize=1pt}
@@ -155,19 +160,6 @@
   }
   \advance\yshift by -0.472pt % block height + a little bit
 }
-
-\def\pst at closedshadow{%
-  \addto at pscode{%
-    gsave
-    \psk at shadowsize \psk at shadowangle \tx at PtoC
-    \tx at Shadow
-    \pst at usecolor\psshadowcolor
-    gsave fill grestore
-    stroke
-    grestore%
-  }%
-}
-\gdef\make@neName#1#2#3{\expandafter\edef\csname#1\romannumeral#2\endcsname{#3}}
 \makeatother
 
 
