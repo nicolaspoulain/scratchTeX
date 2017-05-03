@@ -5,6 +5,7 @@
 \usepackage[left=1cm, right=1cm, top=1.5cm, bottom=1.5cm]{geometry}
 \setlength{\parindent}{0mm}             % pas de retrait de paragraphe
 
+\usepackage{trace}
 \usepackage{pst-all}
 \usepackage{amsfonts, amsmath, amssymb}
 \usepackage[frenchb]{babel}             % règles françaises de typo
@@ -23,14 +24,11 @@
 \definecolor{ajouterblocs}{RGB}{99,45,153}
 \definecolor{flagcolor}{RGB}{63,141,21}
 
-\newlength{\myl}
-\newlength{\mylen}
-\newcounter{ctr}
-\newcounter{shift}
-\setcounter{shift}{0}
-
-\def\blockbase#1#2#3#4#5#6#7{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                   \blockbase{w}{h}{a}{b}{z}{x}{y}                   %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % \blockbase w h a b z x y
+\def\blockbase#1#2#3#4#5#6#7{
   %
   %  (x,y)___x+a  ________________(x+w,y)
   %      |   \___/                |
@@ -56,8 +54,11 @@
   (!#6 #4 add #7 #2 sub)                                       % (x+b,y-h)
   (!#6 #5 add #7 #2 sub) % (x+z,y-h)
 }
-\def\blockend#1#2#3#4#5#6{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                     \blockend{w}{h}{b}{z}{x}{y}                     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % \blockend w h b z x y
+\def\blockend#1#2#3#4#5#6{
   %
   %  (x,y)  x+z___________________(x+w,y)
   %      |                        |
@@ -79,6 +80,95 @@
   (!#5 0 add 0 #6 add)           % (0,0)
 }
 
+\newdimen\mylen
+\newdimen\xshift
+\xshift=0pt       % pt will be removed : value is xunit
+\newdimen\yshift
+\yshift=0pt  % pt will be removed : value is yunit
+
+\makeatletter
+\newcommand*{\getlength}[1]{\strip@pt\dimexpr0.035146\dimexpr#1\relax\relax}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                            \field{text}                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\field{\@ifstar\@@field\@field}
+\newcommand{\@field}[1]{%
+  \psframebox*[framearc=.7,fillcolor=white,framesep=2pt]{%
+    \color{black}\normalfont{\textsf{#1}}%
+}}
+\newcommand{\@@field}[1]{%
+  \psframebox*[framearc=.7,fillcolor=white,framesep=2pt]{%
+    \color{black}\normalfont{\textsf{#1}}$^\blacktriangledown$%
+}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                         \block{color}{text}                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\block{\@ifstar\@@block\@block}
+\def\@block#1#2{
+  \settowidth{\mylen}{\bfseries#2}
+  \psset{linearc=0.05,linestyle=none}
+  \psset{fillcolor=#1,fillstyle=solid}
+  \psset{shadow=true,shadowsize=1pt}
+  \rput(!\strip@pt\xshift\space \strip@pt\yshift){
+  % \blockbase w h a b z x y
+    \blockbase{\getlength{\the\mylen}}{0.711}{0.5}{.51}{0}{0}{0}
+    \psset{shadow=false}
+    \uput[0](!0 -0.711 2 div){\color{white}\textsf{\bfseries #2}}
+  }
+  \advance\yshift by -0.772pt % block height + a little bit
+}
+\def\@@block#1{
+  \settowidth{\mylen}{\bfseries#1}
+  \psset{linearc=0.05,linestyle=solid,linewidth=1pt}
+  \psset{fillstyle=none}
+  % \psset{fillcolor=white,fillstyle=solid}
+  \psset{shadow=true,shadowsize=1pt}
+  \rput(!\strip@pt\xshift\space \strip@pt\yshift){
+  % \blockbase w h a b z x y
+    \blockbase{\getlength{\the\mylen}}{0.811}{0.5}{.51}{0}{0}{0}
+  }
+  \advance\yshift by -0.872pt % block height + a little bit
+}
+\def\bloop#1{
+  \newcount\n
+  \n=#1
+  \expandafter\make@neName{ypos}{\number\n}{\the\yshift}
+  \advance\xshift by 0.342pt  % block width  + a little bit
+  \advance\yshift by -0.772pt % block height + a little bit
+   \mylen=\expandafter\csname ypos\expandafter\romannumeral\n\endcsname
+   % ** \the\mylen **
+}
+\def\eloop#1{
+  \newcount\n
+  \n=#1
+  \mylen=\expandafter\csname ypos\expandafter\romannumeral\n\endcsname
+  \advance\xshift by -0.342pt  % block width  + a little bit
+   % --- \strip@pt\mylen ---
+  \psset{linearc=0.05,linestyle=none}
+  \psset{fillcolor=controle,fillstyle=solid}
+  \psset{shadow=true,shadowsize=1pt}
+  \pscustom{%
+   \blockbase{6}{0.711}{0.5}{0.84}{0.3}{\strip@pt\xshift}{\strip@pt\mylen}
+   \blockend{6}{0.411}{0.5}{0.3}{\strip@pt\xshift}{\strip@pt\yshift}
+   \closepath
+   \closedshadow
+  }
+  \advance\yshift by -0.472pt % block height + a little bit
+}
+
+\def\pst at closedshadow{%
+  \addto at pscode{%
+    gsave
+    \psk at shadowsize \psk at shadowangle \tx at PtoC
+    \tx at Shadow
+    \pst at usecolor\psshadowcolor
+    gsave fill grestore
+    stroke
+    grestore%
+  }%
+}
+\gdef\make@neName#1#2#3{\expandafter\edef\csname#1\romannumeral#2\endcsname{#3}}
+\makeatother
 
 
 \begin{document}
@@ -86,17 +176,18 @@
 \section{Introduction}
 
 \begin{pspicture}(0,2)(4,-10)%
-  \pscustom[fillstyle=solid,fillcolor=lightgray]{%
-    \blockbase{6}{0.711}{0.5}{0.51}{0.3}{0}{0}
-    \blockend{6}{0.411}{0.5}{0.3}{0}{-1.5}
-                                        }
-  \pscustom[fillstyle=solid,fillcolor=lightgray]{%
-    \blockbase{6}{0.711}{0.5}{0.51}{0.3}{0}{-3}
-    \blockend{6}{0.411}{0.5}{0.3}{0}{-5.5}
-                                        }
+  \block{stylo}{effacer tout ! }
+  \bloop{2}                                        % }
+  \block{mouvement}{s'orienter à \field*{90}}
+  \bloop{3}                                        % }
+  \block{stylo}{effacer tout ! }
+  \block{stylo}{mettre la taille du stylo à \field{1}}
+  \block*{TEXTE BIDON : BLOC VIDE}
+  \eloop{3}
+  \block{stylo}{stylo en position d'écriture}
+  \eloop{2}
+  \block{stylo}{mettre la taille du stylo à \field{1}}
 \end{pspicture}
-
-
 
 \end{document}
 
