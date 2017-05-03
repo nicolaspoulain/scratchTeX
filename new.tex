@@ -79,11 +79,14 @@
   (!#5 0 add #2 neg #6 add) % (0,-h)
   (!#5 0 add 0 #6 add)           % (0,0)
 }
+\newdimen\mypos
 \newdimen\mylen
 \newdimen\xshift
 \xshift=0pt       % pt will be removed : value is xunit
 \newdimen\yshift
 \yshift=0pt  % pt will be removed : value is yunit
+\newcount\mycount
+\mycount=0
 \makeatletter
 \newcommand*{\getlength}[1]{\strip@pt\dimexpr0.035146\dimexpr#1\relax\relax}
 \def\pst at closedshadow{%
@@ -140,25 +143,35 @@
 %                           loopBlock{text}                           %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \def\bloop#1{
-  \newcount\n \n=#1
-  \expandafter\make@neName{ypos}{\number\n}{\the\yshift}
+  \advance\mycount by 1 %
+  \settowidth{\mylen}{\bfseries#1}
+	\edef\text{#1}
+	% define myleniv and yposiv if n=4 (iv is romannumeral for 4)
+  \expandafter\make@neName{mylen}{\number\mycount}{\the\mylen}
+  \expandafter\make@neName{ypos}{\number\mycount}{\the\yshift}
+	\expandafter\make@neName{text}{\number\mycount}{\protect\text}
   \advance\xshift by 0.342pt  % block width  + a little bit
   \advance\yshift by -0.772pt % block height + a little bit
 }
-\def\eloop#1{
-  \newcount\n \n=#1
-  \mylen=\expandafter\csname ypos\expandafter\romannumeral\n\endcsname
+\def\eloop{
+  % get myleniv and yposiv if n=4 (iv is romannumeral for 4)
+  \mylen=\expandafter\csname mylen\expandafter\romannumeral\mycount\endcsname
+  \mypos=\expandafter\csname ypos\expandafter\romannumeral\mycount\endcsname
   \advance\xshift by -0.342pt  % block width  + a little bit
   \psset{linearc=0.05,linestyle=none}
   \psset{fillcolor=controle,fillstyle=solid}
   \psset{shadow=true,shadowsize=1pt}
   \pscustom{%
-   \blockbase{6}{0.711}{0.5}{0.84}{0.3}{\strip@pt\xshift}{\strip@pt\mylen}
-   \blockend{6}{0.411}{0.5}{0.3}{\strip@pt\xshift}{\strip@pt\yshift}
+   \blockbase{\getlength{\the\mylen}}{0.711}{0.5}{0.84}{0.3}{\strip@pt\xshift}{\strip@pt\mypos}
+   \blockend{\getlength{\the\mylen}}{0.411}{0.5}{0.3}{\strip@pt\xshift}{\strip@pt\yshift}
    \closepath
    \closedshadow
   }
+	\rput[0](!\strip@pt\xshift\space \strip@pt\mypos\space){
+		\uput[0](!0 -0.711 2 div){\color{white}\textsf{\bfseries \expandafter\csname text\expandafter\romannumeral\mycount\endcsname}}
+		}
   \advance\yshift by -0.472pt % block height + a little bit
+  \advance\mycount by -1 %
 }
 \makeatother
 
@@ -169,15 +182,17 @@
 
 \begin{pspicture}(0,2)(4,-10)%
   \block{stylo}{effacer tout ! }
-  \bloop{2}                                        % }
-  \block{mouvement}{s'orienter à \field*{90}}
-  \bloop{3}                                        % }
+\traceon
+	\bloop{répéter \psframebox{23} fois }
+\traceoff
+	\block{mouvement}{s'orienter à \field*{90}}
+  % \bloop{répéter \field{4} fois }
   \block{stylo}{effacer tout ! }
   \block{stylo}{mettre la taille du stylo à \field{1}}
   \block*{TEXTE BIDON : BLOC VIDE}
-  \eloop{3}
+	\eloop
   \block{stylo}{stylo en position d'écriture}
-  \eloop{2}
+  % \eloop
   \block{stylo}{mettre la taille du stylo à \field{1}}
 \end{pspicture}
 
