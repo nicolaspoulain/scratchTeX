@@ -1,18 +1,13 @@
 \documentclass[a4paper,0.952pt]{article}
-% -------------------------------------
 
-% Marges de la page
 \usepackage[left=1cm, right=1cm, top=1.5cm, bottom=1.5cm]{geometry}
 \setlength{\parindent}{0mm}             % pas de retrait de paragraphe
 
-\usepackage{graphics}
-\usepackage{graphicx}                   % pour images *.jpg ou *.png
-\usepackage{tikz, tkz-tab}
+\usepackage{trace}
 \usepackage{pst-all}
-\usepackage{url}
 \usepackage{amsfonts, amsmath, amssymb}
-\usepackage[frenchb]{babel}             % règles françaises de typo
-\usepackage{fontspec}                   % pour fontes spéciales utilisé par babel
+\usepackage[frenchb]{babel}
+\usepackage{fontspec}
 
 \usepackage{color}
 \definecolor{mouvement}{RGB}{74,108,212}
@@ -27,22 +22,61 @@
 \definecolor{ajouterblocs}{RGB}{99,45,153}
 \definecolor{flagcolor}{RGB}{63,141,21}
 
-\newlength{\myl}
-\newlength{\mylen}
-\newcounter{ctr}
-\newcounter{shift}
-\setcounter{shift}{0}
-
-
-%##################################################
-% Low level definitions
-%##################################################
-\newdimen\ypos
-\ypos=-0.289pt              % where to draw current block
-% how to calculate with dimen
-% \advance\ypos by 1pt % ypos = ypos + 1
-% \ypos=3\ypos         % ypos = 3 * ypos
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                   \blockbase{w}{h}{a}{b}{z}{x}{y}                   %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % \blockbase w h a b z x y
+\def\blockbase#1#2#3#4#5#6#7{
+  %
+  %  (x,y)___x+a  ________________(x+w,y)
+  %      |   \___/                |
+  %      |       (x+a+d+l,y+b)    |
+  %      | x+z__x+b  _____________|
+  %(x,y-h)      \___/             (x+w,y-h)
+  %                 (b+d+l,y+b-h)
+  %
+  \def\b{-0.1} % height of \ (part of \_/ )
+  \def\d{0.1}  % width  of \ (part of \_/ )
+  \def\l{0.25} % width  of _ (part of \_/ )
+  \psline(!#6 #7 #2 sub) % (x,y-h)
+  (!#6 #7)               % (x,y)
+  (!#6 #3 add #7)                                        % (x+a,y)
+  (!#6 #3 add \d\space add \b\space #7 add)              % (x+a+d,y+b)
+  (!#6 #3 add \d\space add \l\space add \b\space #7 add) % (x+a+d+l,y+b)
+  (!#6 #3 add \d\space dup add add \l\space add #7)      % (x+a+2d+l,y)
+  (!#6 #1 add #7)        % (x+w,y)
+  (!#6 #1 add #7 #2 sub) % (x+w,y-h)
+  (!#6 #4 add \d\space dup add add \l\space add #7 #2 sub)     % (x+b+2d+l,y-h)
+  (!#6 #4 add \d\space add \l\space add \b\space #2 sub #7 add)% (x+b+d+l,y+b-h)
+  (!#6 #4 add \d\space add \b\space #2 sub #7 add)             % (x+b+d,y+b-h)
+  (!#6 #4 add #7 #2 sub)                                       % (x+b,y-h)
+  (!#6 #5 add #7 #2 sub) % (x+z,y-h)
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                     \blockend{w}{h}{b}{z}{x}{y}                     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % \blockend w h b z x y
+\def\blockend#1#2#3#4#5#6{
+  %
+  %  (x,y)  x+z___________________(x+w,y)
+  %      |                        |
+  %      |_____x+b  ______________|
+  %(x,y-h)     \___/              (x+w,y-h)
+  %               (x+b+d+l,y+b-h)
+  %
+  \def\b{-0.1} % height of \ (part of \_/ )
+  \def\d{0.1}  % width  of \ (part of \_/ )
+  \def\l{0.25} % width  of _ (part of \_/ )
+  \psline(!#5 #4 add 0 #6 add)     % (z,0)
+  (!#5 #1 add 0 #6 add)          % (w,0)
+  (!#5 #1 add #2 neg #6 add)     % (w,-h)
+  (!#5 #3 add \d\space dup add add \l\space add #2 neg #6 add)  % (b+2d+l,-h)
+  (!#5 #3 add \d\space add \l\space add \b\space #2 sub #6 add) % (b+d+l,b-h)
+  (!#5 #3 add \d\space add \b\space #2 sub #6 add)              % (b+d,b-h)
+  (!#5 #3 add #2 neg #6 add)                                    % (b,-h)
+  (!#5 0 add #2 neg #6 add) % (0,-h)
+  (!#5 0 add 0 #6 add)           % (0,0)
+}
 % \blockeventbase{width}{height}{xb}
 \def\blockeventbase#1#2#3{
   \def\d{0.10}
@@ -60,35 +94,14 @@
    \closedshadow
 }
 }
-% \blockbase{width}{height}{xb}{xh}
-\def\blockbase#1#2#3#4{
-  \def\d{0.10}
-  \def\l{0.25}
-  \def\yb{-0.1}
-  % \pspolygon(0,0)(!#3 0)
-    % (!#3 \d\space add \yb)
-    % (!#3 \d\space add \l\space add \yb)
-    % (!#3 \d\space add \l\space add \d\space add 0)(#1,0)
-    % (#1,#2)
-    % (!#4 \d\space add \l\space add \d\space add #2)
-    % (!#4 \d\space add \l\space add #2 \yb\space add)
-    % (!#4 \d\space add #2 \yb\space add)
-    % (#4,#2) (0,#2)
-  \pspolygon(!0 1 #2 neg add)
-    (!#3 1 #2 neg add)
-    (!#3 \d\space add 1 #2 neg add \yb\space add)
-    (!#3 \d\space add \l\space add 1 #2 neg add \yb\space add)
-    (!#3 \d\space add \l\space add \d\space add 1 #2 neg add)
-    (!#1 1 #2 neg add)
-    (!#1 1)
-    (!#4 \d\space add \l\space add \d\space add 1)
-    (!#4 \d\space add \l\space add 1 \yb\space add)
-    (!#4 \d\space add 1 \yb\space add)
-    (!#4 1)
-    (!0 1)
-}
+\newdimen\mypos
+\newdimen\mylen
+\newdimen\xshift \xshift=0pt       % pt will be removed : value is xunit
+\newdimen\yshift \yshift=0pt  % pt will be removed : value is yunit
+\newcounter{cntr} \setcounter{cntr}{0}
 
 \makeatletter
+\newcommand*{\getlength}[1]{\strip@pt\dimexpr0.035146\dimexpr#1\relax\relax}
 \def\pst at closedshadow{%
   \addto at pscode{%
     gsave
@@ -100,159 +113,131 @@
     grestore%
   }%
 }
-\newcommand*{\getlength}[1]{\strip@pt\dimexpr0.035146\dimexpr#1\relax\relax}
-\makeatother
-
-%##################################################
-% higher level definitions
-%##################################################
-
-
-\makeatletter
-
-\def\field{\@ifstar\@@field\@field}
-\newcommand{\@field}[1]{%
-  \psframebox*[framearc=.7,fillcolor=white,framesep=2pt]{%
-    \color{black}\normalfont{\textsf{#1}}%
-}}
-\newcommand{\@@field}[1]{%
-  \psframebox*[framearc=.7,fillcolor=white,framesep=2pt]{%
-    \color{black}\normalfont{\textsf{#1}}$^\blacktriangledown$%
-}}
-\def\vertBlock#1#2{
-  \psset{linearc=0,linestyle=none}
-  \psset{fillcolor=controle,fillstyle=solid}
-  \psset{shadow=true,shadowsize=1pt,shadowangle=-45}
-  % \rput(-0.012,0){\pspolygon(0,-0.2)(#1,-0.2)(!#1 #2 0.2 add)(!0 #2 0.2 add)}
-  \rput(0,0.289){\pspolygon(0,-0.2)(#1,-0.2)(!#1 #2 0.07 add)(!0 #2 0.07 add)}
-}
-
-
-%----------------------------- \blockevent{text}
-\def\blockevent#1{
-  \settowidth{\myl}{\bfseries#1}
-  \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
-  \psset{linearc=0.05,linestyle=none}
-  \psset{fillcolor=evenements,fillstyle=solid}
-  \psset{shadow=true,shadowsize=1pt}
-  \rput(0,0){
-    \blockeventbase{\getlength{\the\myl}}{0.711}{.51}
-    \psset{shadow=false}
-    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries #1}}
-  }
-  \advance\ypos by -0.772pt % block height + a little bit
-}
-
 \def\flag{%
 \pspolygon[unit=0.9,linearc=0,linewidth=2pt,linecolor=flagcolor,linestyle=solid,fillcolor=flagcolor,fillstyle=solid](0.082,0.43)(0.2,0.95)(0.3,0.9)(0.4,0.88)(0.5,0.88)(0.7,0.92)(0.7,0.65)(0.5,0.6)(0.4,0.6)(0.3,0.65)(0.14,0.69)
 }
-%----------------------------- \blockFlag
-\def\blockFlag{
-  \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             \blockflag                              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\blockflag{
   \psset{linearc=0.05,linestyle=none}
   \psset{fillcolor=evenements,fillstyle=solid}
   \psset{shadow=true,shadowsize=1pt}
-  \rput(0,0){
+  \rput(!\strip@pt\xshift\space \strip@pt\yshift){
     \blockeventbase{4}{0.711}{.51}
     \psset{shadow=false}
     \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries quand \qquad est cliqué}}
     \rput(1.2,-0.25){\flag}
   }
-  \advance\ypos by -0.772pt % block height + a little bit
+  \advance\yshift by -0.061pt % a little bit
 }
-%----------------------------- \blockblank{text}
-\def\vertWidth{0.5}
-\def\blockblank#1{
-  \settowidth{\myl}{\bfseries#1}
-  \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
-  \setcounter{ctr}{\theshift}
-  \loop
-    \ifnum\theshift>0
-      \rput(!\thectr\space -1 add \vertWidth\space 0.05 add mul \Y){\vertBlock{\vertWidth}{0.711}}
-    \fi
-    \addtocounter{ctr}{-1}
-    \ifnum\thectr>0
-  \repeat
-  \psset{linearc=0.05,linestyle=solid}
-  \psset{fillstyle=none}
-  \psset{shadow=false,shadowsize=1pt}
-  \rput(!\theshift\space \vertWidth\space 0.05 add mul \Y){
-    \blockbase{\getlength{\the\myl}}{0.711}{0.5}{.51}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                         \blockevent{text}                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\blockevent#1{
+  \settowidth{\mylen}{\bfseries#1}
+  \psset{linearc=0.05,linestyle=none}
+  \psset{fillcolor=evenements,fillstyle=solid}
+  \psset{shadow=true,shadowsize=1pt}
+  \rput(!\strip@pt\xshift\space \strip@pt\yshift){
+    \blockeventbase{\getlength{\the\mylen}}{0.711}{.51}
     \psset{shadow=false}
-    \uput[0](!0 2 -0.711 add 2.1 div){\color{white}\textsf{\bfseries 1}}
+    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries #1}}
   }
-  \advance\ypos by -0.752pt % block height + a little bit
+  \advance\yshift by -0.061pt % a little bit
 }
-%----------------------------- \block{color}{text}
-\def\block#1#2{
-  \settowidth{\myl}{\bfseries#2}
-  \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
-  \setcounter{ctr}{\theshift}
-  \loop
-    \ifnum\theshift>0
-      \rput(!\thectr\space -1 add \vertWidth\space 0.05 add mul \Y){\vertBlock{\vertWidth}{0.711}}
-    \fi
-    \addtocounter{ctr}{-1}
-    \ifnum\thectr>0
-  \repeat
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                           \lfield{text}                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\lfield#1{
+  \psframebox*[framearc=0,framesep=2pt,shadow=true,shadowangle=135]{%
+		\color{white}\normalfont{\textsf{#1}}\color{black}$^\blacktriangledown$%
+}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                      \tfield{color}{text}                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\tfield{\@ifstar\@@tfield\@tfield}
+\newcommand{\@tfield}[2]{\!
+  \psframebox*[framearc=.9,fillcolor=#1,framesep=4pt,shadow=true]{%
+    \color{white}\normalfont{\textsf{\bfseries #2}}%
+}}
+\newcommand{\@@tfield}[2]{\!
+  \psframebox*[framearc=.9,fillcolor=#1,framesep=1pt,shadow=true]{%
+    \color{white}\normalfont{\textsf{\bfseries #2}}%
+}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                            \nfield{text}                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\nfield{\@ifstar\@@field\@field}
+\newcommand{\@field}[1]{%
+  \psframebox*[framearc=.9,fillcolor=white,framesep=2pt,shadow=false]{%
+    \color{black}\normalfont{\textsf{#1}}%
+}}
+\newcommand{\@@field}[1]{%
+  \psframebox*[framearc=.9,fillcolor=white,framesep=2pt,shadow=false]{%
+    \color{black}\normalfont{\textsf{#1}}$^\blacktriangledown$%
+}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                         \block{color}{text}                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\block{\@ifstar\@@block\@block}
+\def\@block#1#2{
+  \settowidth{\mylen}{\bfseries#2}
   \psset{linearc=0.05,linestyle=none}
   \psset{fillcolor=#1,fillstyle=solid}
   \psset{shadow=true,shadowsize=1pt}
-  \rput(!\theshift\space \vertWidth\space 0.05 add mul \Y){
-    \blockbase{\getlength{\the\myl}}{0.711}{0.5}{.51}
+  \rput(!\strip@pt\xshift\space \strip@pt\yshift){
+  % \blockbase w h a b z x y
+    \blockbase{\getlength{\the\mylen}}{0.711}{0.5}{.51}{0}{0}{0}
     \psset{shadow=false}
-    \uput[0](!0 2 -0.711 add 2.1 div){\color{white}\textsf{\bfseries #2}}
+    \uput[0](!0 -0.711 2 div){\color{white}\textsf{\bfseries #2}}
   }
-  \advance\ypos by -0.772pt % block height + a little bit
+  \advance\yshift by -0.772pt % block height + a little bit
 }
-%----------------------------- \blockLoop{text}
-\newcounter{nbloop}
-\setcounter{nbloop}{0}
-\newenvironment{blockLoop}[1]{
+\def\@@block#1{
   \settowidth{\mylen}{\bfseries#1}
-  \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
-  \setcounter{ctr}{\theshift}
-  \loop
-    \ifnum\theshift>0
-      \rput(!\thectr\space -1 add \vertWidth\space 0.05 add mul \Y){\vertBlock{\vertWidth}{0.711}}
-    \fi
-    \addtocounter{ctr}{-1}
-    \ifnum\thectr>0
-  \repeat
+  \psset{linearc=0.05,linestyle=solid,linewidth=1pt}
+  \psset{fillstyle=none}
+  \psset{fillcolor=white,fillstyle=solid}
+  \blockbase{\getlength{\the\mylen}}{0.811}{0.5}{.51}{0}{\strip@pt\xshift}{\strip@pt\yshift}
+  \advance\yshift by -0.872pt % block height + a little bit
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                           loopBlock{text}                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\@nameedef#1{\expandafter\edef\csname #1\endcsname}
+
+\def\repeatbegin#1{
+  \addtocounter{cntr}{1} %
+  \settowidth{\mylen}{\bfseries#1}
+  \@namedef{text\arabic{cntr}}{#1}
+  \@nameedef{ypos\arabic{cntr}}{\the\yshift}
+  \@nameedef{mylen\arabic{cntr}}{\the\mylen}
+  \advance\xshift by 0.342pt  % block width  + a little bit
+  \advance\yshift by -0.772pt % block height + a little bit
+}
+\def\repeatend{
+  \mypos=\@nameuse{ypos\arabic{cntr}}
+  \mylen\@nameuse{mylen\arabic{cntr}}
+  \advance\xshift by -0.342pt  % block width  + a little bit
   \psset{linearc=0.05,linestyle=none}
   \psset{fillcolor=controle,fillstyle=solid}
   \psset{shadow=true,shadowsize=1pt}
-  \rput(!\theshift\space \vertWidth\space 0.05 add mul \Y){
-    \blockbase{\getlength{\the\mylen}}{0.711}{1.05}{0.51}
-    \psset{shadow=false}
-    \uput[0](!0 2 -0.711 add 2.1 div){\color{white}\textsf{\bfseries #1}}
+  \pscustom{%
+   \blockbase{\getlength{\the\mylen}}{0.711}{0.5}{0.84}{0.3}{\strip@pt\xshift}{\strip@pt\mypos}
+   \blockend{\getlength{\the\mylen}}{0.311}{0.5}{0.3}{\strip@pt\xshift}{\strip@pt\yshift}
+   \closepath
+   \closedshadow
   }
-  \advance\ypos by -0.772pt % block height + a little bit
-  \addtocounter{shift}{1}
-}{
-  \Gscale@div\Y \ypos{1pt} % Y=ypos but without unit (graphics package)
-  \addtocounter{shift}{-1}
-  \setcounter{ctr}{\theshift}
-  \loop
-    \ifnum\theshift>0
-      \rput(!\thectr\space -1 add \vertWidth\space 0.05 add mul \Y){\vertBlock{\vertWidth}{0.711}}
-    \fi
-    \addtocounter{ctr}{-1}
-    \ifnum\thectr>0
-  \repeat
-  \psset{linearc=0.05,linestyle=none}
-  \psset{fillcolor=controle,fillstyle=solid}
-  \psset{shadow=true,shadowsize=1pt}
-  \rput(!\theshift\space \vertWidth\space 0.05 add mul \Y){
-    \blockbase{\getlength{\the\mylen}}{0.451}{0.5}{1.05}
-    \psset{shadow=false}
-    \rput{-90}(!\getlength{\the\mylen} -0.3 add 2 -0.451 add 2.1 div){\color{white}\textsf{$\mathbf{\Lsh}$}}
-  }
-  \advance\ypos by -0.512pt % block height + a little bit
-  \global\ypos=\ypos
+  \rput[0](!\strip@pt\xshift \space \strip@pt\mypos\space){
+    \uput[0](!0 -0.711 2 div){\color{white}\textsf{\bfseries \@nameuse{text\arabic{cntr}}}}
+    }
+  \advance\yshift by -0.372pt % block height + a little bit
+  \addtocounter{cntr}{-1} %
 }
 \makeatother
-
+\def\larrow{ \!\!\scalebox{1.3}{$\circlearrowleft$} }
+\def\rarrow{ \!\!\scalebox{1.3}{$\circlearrowright$} }
 
 
 
@@ -260,47 +245,31 @@
 
 \section{Introduction}
 
-\noindent
-\begin{minipage}[c]{.65\textwidth}
-\begin{verbatim}
-\begin{pspicture}(0,0)(4,-10)%
-  \blockFlag
-  \block{stylo}{mon texte super super SUPER long}
-  \begin{blockLoop}{répéter indéfiniment}
-    \block{stylo}{montrer\quad}
-    \begin{blockLoop}{répéter \field{10} fois }
-      \block{mouvement}{donner la valeur \field{0} à x }
-      \block{stylo}{mon texte super long}
-      \block{evenements}{le texte du bloc \field*{90}}
-      \blockblank{--- caché ( pédagogie) ---}
-    \end{blockLoop}
-    \block{stylo}{mon texte super long}
-  \end{blockLoop}
-  \blockblank{--- xxxxxxxxxxxxx ---}
-\end{pspicture}
-\end{verbatim}
-\end{minipage}% <---------------- Note the use of "%"
-\begin{minipage}[c]{25\textwidth}
-\begin{pspicture}(0,0)(4,-10)%
-  % \blockevent{quand ce lutin est cliqué}
-  \blockFlag
-  \block{mouvement}{s'orienter à \field*{90}}
+\begin{pspicture}(0,2)(6,-10)%
+  \blockflag
   \block{stylo}{effacer tout }
   \block{stylo}{stylo en position d'écriture}
-  \block{stylo}{mettre la taille du stylo à \field{1}}
-  \begin{blockLoop}{répéter \field{240} fois }
-    \begin{blockLoop}{répéter \field{4} fois }
-      \block{mouvement}{avancer de \field{100} }
-      \block{mouvement}{tourner de \field{90} degrés}
-      % \blockblank{--- caché ( pédagogie) ---}
-    \end{blockLoop}
-    \block{mouvement}{tourner de \field{1.5} degrés}
-    \block{stylo}{ajouter \field{1} à la couleur du stylo}
-  \end{blockLoop}
-  % \blockblank{--- xxxxxxxxxxxxx ---}
+  \block{stylo}{mettre la taille du stylo à \nfield{1}}
+  \repeatbegin{répéter \nfield{240} fois }
+  \repeatbegin{répéter \nfield{4} fois }
+  \block{mouvement}{avancer de \nfield{100} }
+	\block{mouvement}{tourner \larrow de \nfield{90} degrés }
+  \block*{BLOC À COMPLÉTER }
+  \block{stylo}{effacer tout }
+  \repeatend
+  \block{mouvement}{tourner \rarrow de \nfield{1.5} degrés }
+  \repeatend
+  \block{stylo}{ajouter \nfield{1} à la couleur du stylo}
 \end{pspicture}
-\end{minipage}
-
-
+%
+\xshift=0pt       % pt will be removed : value is xunit
+\yshift=0pt       % pt will be removed : value is xunit
+%
+\begin{pspicture}(0,2)(4,-10)%
+	\blockevent{quand \lfield{fleche droite} est pressé}
+  \block{mouvement}{s'orienter à \nfield*{90} }
+	\block{mouvement}{avancer de \tfield*{operateurs}{\tfield{donnees}{var} + \nfield{2} } \ }
+\end{pspicture}
 
 \end{document}
+
