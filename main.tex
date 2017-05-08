@@ -53,29 +53,34 @@
   (!#6 #5 add #7 #2 sub) % (x+z,y-h)
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                     \blockend{w}{h}{b}{z}{x}{y}                     %
+%                   \blockend{w}{h}{a}{b}{z}{x}{y}                    %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  % \blockend w h b z x y
-\def\blockend#1#2#3#4#5#6{
+  % \blockend w h a b z x y
+\def\blockend#1#2#3#4#5#6#7{
   %
-  %  (x,y)  x+z___________________(x+w,y)
-  %      |                        |
-  %      |_____x+b  ______________|
-  %(x,y-h)     \___/              (x+w,y-h)
+  %  (x,y)  x+z___x+a  _____________(x+w,y)
+  %      |        \___/             |
+  %      |            (x+a+d+l,y+b) |
+  %      |_____x+b  ________________|
+  %(x,y-h)     \___/                (x+w,y-h)
   %               (x+b+d+l,y+b-h)
   %
   \def\b{-0.1} % height of \ (part of \_/ )
   \def\d{0.1}  % width  of \ (part of \_/ )
   \def\l{0.25} % width  of _ (part of \_/ )
-  \psline(!#5 #4 add 0 #6 add)     % (z,0)
-  (!#5 #1 add 0 #6 add)          % (w,0)
-  (!#5 #1 add #2 neg #6 add)     % (w,-h)
-  (!#5 #3 add \d\space dup add add \l\space add #2 neg #6 add)  % (b+2d+l,-h)
-  (!#5 #3 add \d\space add \l\space add \b\space #2 sub #6 add) % (b+d+l,b-h)
-  (!#5 #3 add \d\space add \b\space #2 sub #6 add)              % (b+d,b-h)
-  (!#5 #3 add #2 neg #6 add)                                    % (b,-h)
-  (!#5 0 add #2 neg #6 add) % (0,-h)
-  (!#5 0 add 0 #6 add)           % (0,0)
+  \psline(!#5 #6 add #7)     % (x+z,y)
+	(!#6 #3 add #7)                                        % (x+a,y)
+	(!#6 #3 add \d\space add \b\space #7 add)              % (x+a+d,y+b)
+	(!#6 #3 add \d\space add \l\space add \b\space #7 add) % (x+a+d+l,y+b)
+	(!#6 #3 add \d\space dup add add \l\space add #7)      % (x+a+2d+l,y)
+  (!#6 #1 add #7)        % (x+w,y)
+  (!#6 #1 add #7 #2 sub) % (x+w,y-h)
+	(!#6 #4 add \d\space dup add add \l\space add #7 #2 sub)     % (x+b+2d+l,y-h)
+	(!#6 #4 add \d\space add \l\space add \b\space #2 sub #7 add)% (x+b+d+l,y+b-h)
+	(!#6 #4 add \d\space add \b\space #2 sub #7 add)             % (x+b+d,y+b-h)
+	(!#6 #4 add #7 #2 sub)                                       % (x+b,y-h)
+  (!#6 #7 #2 sub) % (x,y-h)
+  (!#6 #7)               % (x,y)
 }
 % \blockeventbase{width}{height}{xb}
 \def\blockeventbase#1#2#3{
@@ -225,14 +230,14 @@
   \psset{shadow=true,shadowsize=1pt}
   \pscustom{%
    \blockbase{\getlength{\the\mylen}}{0.711}{0.5}{0.84}{0.3}{\strip@pt\xshift}{\strip@pt\mypos}
-   \blockend{\getlength{\the\mylen}}{0.311}{0.5}{0.3}{\strip@pt\xshift}{\strip@pt\yshift}
+	 \blockend{\getlength{\the\mylen}}{0.411}{0.84}{0.5}{0.3}{\strip@pt\xshift}{\strip@pt\yshift}
    \closepath
    \closedshadow
   }
   \rput[0](!\strip@pt\xshift \space \strip@pt\mypos\space){
     \uput[0](!0 -0.711 2 div){\color{white}\textsf{\bfseries \@nameuse{text\arabic{cntr}}}}
     }
-  \advance\yshift by -0.372pt % block height + a little bit
+  \advance\yshift by -0.472pt % block height + a little bit
   \addtocounter{cntr}{-1} %
 }
 \makeatother
