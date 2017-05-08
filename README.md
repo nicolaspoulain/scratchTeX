@@ -20,17 +20,18 @@ Voici un exemple de résultat et le code correspondant, ci-dessous.
 
 Le code
 
-    \blockFlag
-    \block{mouvement}{s'orienter à \field*{90}}
+    \blockflag
     \block{stylo}{effacer tout }
     \block{stylo}{stylo en position d'écriture}
-    \block{stylo}{mettre la taille du stylo à \field{1}}
-    \begin{blockLoop}{répéter \field{240} fois }
-      \begin{blockLoop}{répéter \field{4} fois }
-        \block{mouvement}{avancer de \field{100} }
-        \block{mouvement}{tourner de \field{90} degrés}
-      \end{blockLoop}
-      \block{mouvement}{tourner de \field{1.5} degrés}
-      \block{stylo}{ajouter \field{1} à la couleur du stylo}
-    \end{blockLoop}
+    \block{apparence}{mettre l'effet \lfield{couleur} à \nfield{0} }
+    \repeatbegin{répéter \nfield{240} fois }
+    \repeatbegin{répéter \nfield{4} fois }
+    \block{mouvement}{avancer de 
+            \tfield*{operateurs}{\tfield{donnees}{var} * \nfield{10} } \ }
+    \block{mouvement}{tourner \larrow de \nfield{90} degrés }
+    \repeatend
+    \block{mouvement}{tourner \rarrow de \nfield{1.5} degrés }
+    \block*{BLOC VIDE À COMPLÉTER }
+    \repeatend
+    \block{stylo}{relever le stylo}
 

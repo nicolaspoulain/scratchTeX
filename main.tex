@@ -249,17 +249,16 @@
   \blockflag
   \block{stylo}{effacer tout }
   \block{stylo}{stylo en position d'écriture}
-  \block{stylo}{mettre la taille du stylo à \nfield{1}}
+	\block{apparence}{mettre l'effet \lfield{couleur} à \nfield{0} }
   \repeatbegin{répéter \nfield{240} fois }
   \repeatbegin{répéter \nfield{4} fois }
-  \block{mouvement}{avancer de \nfield{100} }
+	\block{mouvement}{avancer de \tfield*{operateurs}{\tfield{donnees}{var} * \nfield{10} } \ }
 	\block{mouvement}{tourner \larrow de \nfield{90} degrés }
-  \block*{BLOC À COMPLÉTER }
-  \block{stylo}{effacer tout }
   \repeatend
   \block{mouvement}{tourner \rarrow de \nfield{1.5} degrés }
+  \block*{BLOC VIDE À COMPLÉTER }
   \repeatend
-  \block{stylo}{ajouter \nfield{1} à la couleur du stylo}
+  \block{stylo}{relever le stylo}
 \end{pspicture}
 %
 \xshift=0pt       % pt will be removed : value is xunit
