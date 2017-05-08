@@ -241,14 +241,10 @@
   \addtocounter{cntr}{-1} %
 }
 \makeatother
-\def\larrow{ \!\!\scalebox{1.3}{$\circlearrowleft$} }
-\def\rarrow{ \!\!\scalebox{1.3}{$\circlearrowright$} }
-
-
+\def\larrow{ \!\!\raisebox{0.7em}{\scalebox{1.2}{\rotatebox{-45}{$\curvearrowleft$}} }}
+\def\rarrow{ \!\!\raisebox{-0.2em}{\scalebox{1.2}{\rotatebox{45}{$\curvearrowright$}} }}
 
 \begin{document}
-
-\section{Introduction}
 
 \begin{pspicture}(0,2)(6,-10)%
   \blockflag
