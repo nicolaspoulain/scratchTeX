@@ -1,15 +1,13 @@
 \documentclass[a4paper,0.952pt]{article}
-% -------------------------------------
 
-% Marges de la page
 \usepackage[left=1cm, right=1cm, top=1.5cm, bottom=1.5cm]{geometry}
 \setlength{\parindent}{0mm}             % pas de retrait de paragraphe
 
 \usepackage{trace}
 \usepackage{pst-all}
 \usepackage{amsfonts, amsmath, amssymb}
-\usepackage[frenchb]{babel}             % règles françaises de typo
-\usepackage{fontspec}                   % pour fontes spéciales utilisé par babel
+\usepackage[frenchb]{babel}
+\usepackage{fontspec}
 
 \usepackage{color}
 \definecolor{mouvement}{RGB}{74,108,212}
@@ -79,12 +77,29 @@
   (!#5 0 add #2 neg #6 add) % (0,-h)
   (!#5 0 add 0 #6 add)           % (0,0)
 }
+% \blockeventbase{width}{height}{xb}
+\def\blockeventbase#1#2#3{
+  \def\d{0.10}
+  \def\l{0.25}
+  \def\yb{-0.1}
+  \pscustom{%
+  \psline(0,0)(0,#2)
+  \psellipticarc(!1.19 #2 -0.19 add)(1.3,0.5){10}{170}
+  \psline(2.6,#2)(#1,#2)(#1,0)
+    (!#3 \d\space add \l\space add \d\space add 0)
+    (!#3 \d\space add \l\space add \yb)
+    (!#3 \d\space add \yb)
+    (!#3 0)(0,0)
+   \closepath
+   \closedshadow
+}
+}
 \newdimen\mypos
 \newdimen\mylen
 \newdimen\xshift \xshift=0pt       % pt will be removed : value is xunit
 \newdimen\yshift \yshift=0pt  % pt will be removed : value is yunit
 \newcounter{cntr} \setcounter{cntr}{0}
-\newcount\mycount \mycount=0
+
 \makeatletter
 \newcommand*{\getlength}[1]{\strip@pt\dimexpr0.035146\dimexpr#1\relax\relax}
 \def\pst at closedshadow{%
@@ -98,18 +113,68 @@
     grestore%
   }%
 }
-\gdef\make@neName#1#2#3{\expandafter\edef\csname#1\romannumeral#2\endcsname{#3}}
-
+\def\flag{%
+\pspolygon[unit=0.9,linearc=0,linewidth=2pt,linecolor=flagcolor,linestyle=solid,fillcolor=flagcolor,fillstyle=solid](0.082,0.43)(0.2,0.95)(0.3,0.9)(0.4,0.88)(0.5,0.88)(0.7,0.92)(0.7,0.65)(0.5,0.6)(0.4,0.6)(0.3,0.65)(0.14,0.69)
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                            \field{text}                             %
+%                             \blockflag                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\def\field{\@ifstar\@@field\@field}
+\def\blockflag{
+  \psset{linearc=0.05,linestyle=none}
+  \psset{fillcolor=evenements,fillstyle=solid}
+  \psset{shadow=true,shadowsize=1pt}
+  \rput(!\strip@pt\xshift\space \strip@pt\yshift){
+    \blockeventbase{4}{0.711}{.51}
+    \psset{shadow=false}
+    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries quand \qquad est cliqué}}
+    \rput(1.2,-0.25){\flag}
+  }
+  \advance\yshift by -0.061pt % a little bit
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                         \blockevent{text}                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\blockevent#1{
+  \settowidth{\mylen}{\bfseries#1}
+  \psset{linearc=0.05,linestyle=none}
+  \psset{fillcolor=evenements,fillstyle=solid}
+  \psset{shadow=true,shadowsize=1pt}
+  \rput(!\strip@pt\xshift\space \strip@pt\yshift){
+    \blockeventbase{\getlength{\the\mylen}}{0.711}{.51}
+    \psset{shadow=false}
+    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries #1}}
+  }
+  \advance\yshift by -0.061pt % a little bit
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                           \lfield{text}                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\lfield#1{
+  \psframebox*[framearc=0,framesep=2pt,shadow=true,shadowangle=135]{%
+		\color{white}\normalfont{\textsf{#1}}\color{black}$^\blacktriangledown$%
+}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                      \tfield{color}{text}                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\tfield{\@ifstar\@@tfield\@tfield}
+\newcommand{\@tfield}[2]{\!
+  \psframebox*[framearc=.9,fillcolor=#1,framesep=4pt,shadow=true]{%
+    \color{white}\normalfont{\textsf{\bfseries #2}}%
+}}
+\newcommand{\@@tfield}[2]{\!
+  \psframebox*[framearc=.9,fillcolor=#1,framesep=1pt,shadow=true]{%
+    \color{white}\normalfont{\textsf{\bfseries #2}}%
+}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                            \nfield{text}                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\nfield{\@ifstar\@@field\@field}
 \newcommand{\@field}[1]{%
-  \psframebox*[framearc=.7,fillcolor=white,framesep=2pt]{%
+  \psframebox*[framearc=.9,fillcolor=white,framesep=2pt,shadow=false]{%
     \color{black}\normalfont{\textsf{#1}}%
 }}
 \newcommand{\@@field}[1]{%
-  \psframebox*[framearc=.7,fillcolor=white,framesep=2pt]{%
+  \psframebox*[framearc=.9,fillcolor=white,framesep=2pt,shadow=false]{%
     \color{black}\normalfont{\textsf{#1}}$^\blacktriangledown$%
 }}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,58 +205,70 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                           loopBlock{text}                           %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\def\bloop#1{
-	\addtocounter{cntr}{1} %
-  \advance\mycount by 1 %
+\def\@nameedef#1{\expandafter\edef\csname #1\endcsname}
+
+\def\repeatbegin#1{
+  \addtocounter{cntr}{1} %
   \settowidth{\mylen}{\bfseries#1}
   \@namedef{text\arabic{cntr}}{#1}
-  \expandafter\make@neName{mylen}{\number\mycount}{\the\mylen}
-  \expandafter\make@neName{ypos}{\number\mycount}{\the\yshift}
+  \@nameedef{ypos\arabic{cntr}}{\the\yshift}
+  \@nameedef{mylen\arabic{cntr}}{\the\mylen}
   \advance\xshift by 0.342pt  % block width  + a little bit
   \advance\yshift by -0.772pt % block height + a little bit
 }
-\def\eloop{
-  \mylen=\expandafter\csname mylen\expandafter\romannumeral\mycount\endcsname
-  \mypos=\expandafter\csname ypos\expandafter\romannumeral\mycount\endcsname
+\def\repeatend{
+  \mypos=\@nameuse{ypos\arabic{cntr}}
+  \mylen\@nameuse{mylen\arabic{cntr}}
   \advance\xshift by -0.342pt  % block width  + a little bit
   \psset{linearc=0.05,linestyle=none}
   \psset{fillcolor=controle,fillstyle=solid}
   \psset{shadow=true,shadowsize=1pt}
   \pscustom{%
    \blockbase{\getlength{\the\mylen}}{0.711}{0.5}{0.84}{0.3}{\strip@pt\xshift}{\strip@pt\mypos}
-   \blockend{\getlength{\the\mylen}}{0.411}{0.5}{0.3}{\strip@pt\xshift}{\strip@pt\yshift}
+   \blockend{\getlength{\the\mylen}}{0.311}{0.5}{0.3}{\strip@pt\xshift}{\strip@pt\yshift}
    \closepath
    \closedshadow
   }
   \rput[0](!\strip@pt\xshift \space \strip@pt\mypos\space){
     \uput[0](!0 -0.711 2 div){\color{white}\textsf{\bfseries \@nameuse{text\arabic{cntr}}}}
-		}
-  \advance\yshift by -0.472pt % block height + a little bit
-  \advance\mycount by -1 %
-	\addtocounter{cntr}{-1} %
+    }
+  \advance\yshift by -0.372pt % block height + a little bit
+  \addtocounter{cntr}{-1} %
 }
 \makeatother
+\def\larrow{ \!\!\scalebox{1.3}{$\circlearrowleft$} }
+\def\rarrow{ \!\!\scalebox{1.3}{$\circlearrowright$} }
+
 
 
 \begin{document}
 
 \section{Introduction}
 
-\begin{pspicture}(0,2)(4,-10)%
-  \block{stylo}{effacer tout ! }
-\traceon
-	\bloop{répéter \field{23} fois }
-\traceoff
-	\block{mouvement}{s'orienter à \field*{90} }
-	\bloop{répéter \field{4} fois }
+\begin{pspicture}(0,2)(6,-10)%
+  \blockflag
   \block{stylo}{effacer tout }
-  \block{stylo}{mettre la taille du stylo à \field{1}}
-  \block*{TEXTE BIDON : BLOC VIDE}
-  \block{stylo}{effacer tout }
-	\eloop
   \block{stylo}{stylo en position d'écriture}
-	\eloop
-  \block{stylo}{mettre la taille du stylo à \field{1}}
+  \block{stylo}{mettre la taille du stylo à \nfield{1}}
+  \repeatbegin{répéter \nfield{240} fois }
+  \repeatbegin{répéter \nfield{4} fois }
+  \block{mouvement}{avancer de \nfield{100} }
+	\block{mouvement}{tourner \larrow de \nfield{90} degrés }
+  \block*{BLOC À COMPLÉTER }
+  \block{stylo}{effacer tout }
+  \repeatend
+  \block{mouvement}{tourner \rarrow de \nfield{1.5} degrés }
+  \repeatend
+  \block{stylo}{ajouter \nfield{1} à la couleur du stylo}
+\end{pspicture}
+%
+\xshift=0pt       % pt will be removed : value is xunit
+\yshift=0pt       % pt will be removed : value is xunit
+%
+\begin{pspicture}(0,2)(4,-10)%
+	\blockevent{quand \lfield{fleche droite} est pressé}
+  \block{mouvement}{s'orienter à \nfield*{90} }
+	\block{mouvement}{avancer de \tfield*{operateurs}{\tfield{donnees}{var} + \nfield{2} } \ }
 \end{pspicture}
 
 \end{document}
