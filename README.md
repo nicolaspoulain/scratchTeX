@@ -14,7 +14,8 @@ tels algorithmes en Metapost : http://melusine.eu.org/syracuse/G/mp-scratch/
 Ici, c'est PSTricks qui est utilisé car c'est le langage graphique utilisé par
 l'APMEP, ce qui en fait (selon moi) une référence.
 
-Voici un exemple de résultat et le code correspondant, ci-dessous.
+Voici un exemple de résultat et le code correspondant, ci-dessous.  À gauche
+l'original avec Scratch et à droite le script en LaTeX avec ScratchTeX.
 
 ![enter image description here](https://raw.githubusercontent.com/nicolaspoulain/scratchTeX/master/example.png)
 
