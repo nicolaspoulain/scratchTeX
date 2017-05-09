@@ -234,8 +234,11 @@
    \closepath
    \closedshadow
   }
-  \rput[0](!\strip@pt\xshift \space \strip@pt\mypos\space){
+  \rput[0](!\strip@pt\xshift \space \strip@pt\mypos){
     \uput[0](!0 -0.711 2 div){\color{white}\textsf{\bfseries \@nameuse{text\arabic{cntr}}}}
+    }
+	\rput[0](!\strip@pt\xshift\space \space \getlength{\the\mylen}\space add \strip@pt\yshift){
+		\uput[0]{-90}(!-0.55 -0.25){\color{white} \scalebox{1.2}{$\Lsh$} }
     }
   \advance\yshift by -0.472pt % block height + a little bit
   \addtocounter{cntr}{-1} %
