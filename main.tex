@@ -154,9 +154,29 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                           \lfield{text}                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\def\lfield#1{
+\def\lfield{\@ifstar\@@lfield\@lfield}
+\newcommand{\@lfield}[1]{
+  \psframebox*[framearc=0,framesep=2pt,fillcolor=white,fillstyle=solid,shadow=true,shadowangle=135]{%
+		\color{black}\normalfont{\textsf{#1}}%
+}}
+\newcommand{\@@lfield}[1]{
   \psframebox*[framearc=0,framesep=2pt,shadow=true,shadowangle=135]{%
 		\color{white}\normalfont{\textsf{#1}}\color{black}$^\blacktriangledown$%
+}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                      \iffield{color}{text}                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\iffield{\@ifstar\@@iffield\@iffield}
+\newcommand{\@iffield}[2]{
+  \settowidth{\mylen}{\bfseries#2}
+  \makebox[\mylen]{\rput(-0.7,0.1){\pspolygon[linearc=0,fillcolor=#1,shadow=true](0,-0.25)(-0.25,0)(0,0.25)
+  (!\getlength{\the\mylen}\space 0.25)(!\getlength{\the\mylen}\space 0.25 add 0)(!\getlength{\the\mylen}\space -0.25)
+ \uput[0](-0.15,0){#2}
+  } }
+}
+\newcommand{\@@iffield}[2]{\!
+  \psframebox*[framearc=.9,fillcolor=#1,framesep=1pt,shadow=true]{%
+    \color{white}\normalfont{\textsf{\bfseries #2}}%
 }}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                      \tfield{color}{text}                           %
@@ -253,14 +273,16 @@
   \blockflag
   \block{stylo}{effacer tout }
   \block{stylo}{stylo en position d'écriture}
-	\block{apparence}{mettre l'effet \lfield{couleur} à \nfield{0} }
+	\block{apparence}{mettre l'effet \lfield*{couleur} à \nfield{0} }
   \repeatbegin{répéter \nfield{240} fois }
   \repeatbegin{répéter \nfield{4} fois }
 	\block{mouvement}{avancer de \tfield*{operateurs}{\tfield{donnees}{var} * \nfield{10} } \ }
-	\block{mouvement}{tourner \larrow de \nfield{90} degrés }
+  \repeatbegin{si \iffield{operateurs}{\lfield{2} < \lfield{3}}\ \ \  }
+  \block{mouvement}{tourner \larrow de \nfield{90}  degrés }
+  \repeatend
   \repeatend
   \block{mouvement}{tourner \rarrow de \nfield{1.5} degrés }
-  \block{stylo}{ajouter \nfield{1} à la couluer du stylo }
+  \block{stylo}{ajouter \nfield{1} à la couleur du stylo }
   \repeatend
   \block{stylo}{relever le stylo}
 \end{pspicture}
