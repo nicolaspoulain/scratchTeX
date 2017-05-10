@@ -156,7 +156,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \def\lfield{\@ifstar\@@lfield\@lfield}
 \newcommand{\@lfield}[1]{
-  \psframebox*[framearc=0,framesep=2pt,fillcolor=white,fillstyle=solid,shadow=true,shadowangle=135]{%
+  \psframebox*[framearc=0,framesep=2pt,fillcolor=white,fillstyle=solid,shadow=true]{%
 		\color{black}\normalfont{\textsf{#1}}%
 }}
 \newcommand{\@@lfield}[1]{
@@ -171,7 +171,7 @@
   \settowidth{\mylen}{\bfseries#2}
   \makebox[\mylen]{\rput(-0.7,0.1){\pspolygon[linearc=0,fillcolor=#1,shadow=true](0,-0.25)(-0.25,0)(0,0.25)
   (!\getlength{\the\mylen}\space 0.25)(!\getlength{\the\mylen}\space 0.25 add 0)(!\getlength{\the\mylen}\space -0.25)
- \uput[0](-0.15,0){#2}
+ \uput[0](-0.2,0){#2}
   } }
 }
 \newcommand{\@@iffield}[2]{\!
