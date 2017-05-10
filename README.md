@@ -26,13 +26,13 @@ Le code
     \block{stylo}{stylo en position d'écriture}
     \block{apparence}{mettre l'effet \lfield{couleur} à \nfield{0} }
     \repeatbegin{répéter \nfield{240} fois }
-    \repeatbegin{répéter \nfield{4} fois }
-    \block{mouvement}{avancer de 
-            \tfield*{operateurs}{\tfield{donnees}{var} * \nfield{10} } \ }
-    \block{mouvement}{tourner \larrow de \nfield{90} degrés }
-    \repeatend
-    \block{mouvement}{tourner \rarrow de \nfield{1.5} degrés }
-    \block*{BLOC VIDE À COMPLÉTER }
+      \repeatbegin{répéter \nfield{4} fois }
+        \block{mouvement}{avancer de 
+                \tfield*{operateurs}{\tfield{donnees}{var} * \nfield{10} } \ }
+        \block{mouvement}{tourner \larrow de \nfield{90} degrés }
+      \repeatend
+      \block{mouvement}{tourner \rarrow de \nfield{1.5} degrés }
+      \block{stylo}{ajouter \nfield{1} à la couluer du stylo }
     \repeatend
     \block{stylo}{relever le stylo}
 
