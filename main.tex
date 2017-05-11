@@ -69,16 +69,16 @@
   \def\d{0.1}  % width  of \ (part of \_/ )
   \def\l{0.25} % width  of _ (part of \_/ )
   \psline(!#5 #6 add #7)     % (x+z,y)
-	(!#6 #3 add #7)                                        % (x+a,y)
-	(!#6 #3 add \d\space add \b\space #7 add)              % (x+a+d,y+b)
-	(!#6 #3 add \d\space add \l\space add \b\space #7 add) % (x+a+d+l,y+b)
-	(!#6 #3 add \d\space dup add add \l\space add #7)      % (x+a+2d+l,y)
+  (!#6 #3 add #7)                                        % (x+a,y)
+  (!#6 #3 add \d\space add \b\space #7 add)              % (x+a+d,y+b)
+  (!#6 #3 add \d\space add \l\space add \b\space #7 add) % (x+a+d+l,y+b)
+  (!#6 #3 add \d\space dup add add \l\space add #7)      % (x+a+2d+l,y)
   (!#6 #1 add #7)        % (x+w,y)
   (!#6 #1 add #7 #2 sub) % (x+w,y-h)
-	(!#6 #4 add \d\space dup add add \l\space add #7 #2 sub)     % (x+b+2d+l,y-h)
-	(!#6 #4 add \d\space add \l\space add \b\space #2 sub #7 add)% (x+b+d+l,y+b-h)
-	(!#6 #4 add \d\space add \b\space #2 sub #7 add)             % (x+b+d,y+b-h)
-	(!#6 #4 add #7 #2 sub)                                       % (x+b,y-h)
+  (!#6 #4 add \d\space dup add add \l\space add #7 #2 sub)     % (x+b+2d+l,y-h)
+  (!#6 #4 add \d\space add \l\space add \b\space #2 sub #7 add)% (x+b+d+l,y+b-h)
+  (!#6 #4 add \d\space add \b\space #2 sub #7 add)             % (x+b+d,y+b-h)
+  (!#6 #4 add #7 #2 sub)                                       % (x+b,y-h)
   (!#6 #7 #2 sub) % (x,y-h)
   (!#6 #7)               % (x,y)
 }
@@ -119,7 +119,10 @@
   }%
 }
 \def\flag{%
-\pspolygon[unit=0.9,linearc=0,linewidth=2pt,linecolor=flagcolor,linestyle=solid,fillcolor=flagcolor,fillstyle=solid](0.082,0.43)(0.2,0.95)(0.3,0.9)(0.4,0.88)(0.5,0.88)(0.7,0.92)(0.7,0.65)(0.5,0.6)(0.4,0.6)(0.3,0.65)(0.14,0.69)
+\pspolygon[unit=0.9,linearc=0,linewidth=2pt,linecolor=flagcolor,
+           linestyle=solid,fillcolor=flagcolor,fillstyle=solid]
+           (0.082,0.43)(0.2,0.95)(0.3,0.9)(0.4,0.88)(0.5,0.88)
+           (0.7,0.92)(0.7,0.65)(0.5,0.6)(0.4,0.6)(0.3,0.65)(0.14,0.69)
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                             \blockflag                              %
@@ -131,7 +134,9 @@
   \rput(!\strip@pt\xshift\space \strip@pt\yshift){
     \blockeventbase{4}{0.711}{.51}
     \psset{shadow=false}
-    \uput[0](!0 0.711 2.1 div){\color{white}\textsf{\bfseries quand \qquad est cliqué}}
+    \uput[0](!0 0.711 2.1 div){
+      \color{white}\textsf{\bfseries quand \qquad est cliqué}
+    }
     \rput(1.2,-0.25){\flag}
   }
   \advance\yshift by -0.061pt % a little bit
@@ -156,28 +161,32 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \def\lfield{\@ifstar\@@lfield\@lfield}
 \newcommand{\@lfield}[1]{
-  \psframebox*[framearc=0,framesep=2pt,fillcolor=white,fillstyle=solid,shadow=true]{%
-		\color{black}\normalfont{\textsf{#1}}%
-}}
+  \psframebox*[framearc=0,framesep=2pt,fillcolor=white,
+               fillstyle=solid,shadow=true]{%
+    \color{black}\normalfont{\textsf{#1}}}
+}
 \newcommand{\@@lfield}[1]{
   \psframebox*[framearc=0,framesep=2pt,shadow=true,shadowangle=135]{%
-		\color{white}\normalfont{\textsf{#1}}\color{black}$^\blacktriangledown$%
-}}
+    \color{white}\normalfont{\textsf{#1}}\color{black}$^\blacktriangledown$}
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                      \iffield{color}{text}                           %
+%                     \iffield{color}{text}                           %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \def\iffield{\@ifstar\@@iffield\@iffield}
 \newcommand{\@iffield}[2]{
   \settowidth{\mylen}{\bfseries#2}
-  \makebox[\mylen]{\rput(-0.7,0.1){\pspolygon[linearc=0,fillcolor=#1,shadow=true](0,-0.25)(-0.25,0)(0,0.25)
-  (!\getlength{\the\mylen}\space 0.25)(!\getlength{\the\mylen}\space 0.25 add 0)(!\getlength{\the\mylen}\space -0.25)
- \uput[0](-0.2,0){#2}
-  } }
+  \makebox[\mylen]{\rput(-0.7,0.1){
+    \pspolygon[linearc=0,fillcolor=#1,shadow=true]
+      (0,-0.25)(-0.25,0)(0,0.25)
+      (!\getlength{\the\mylen}\space 0.25)
+      (!\getlength{\the\mylen}\space 0.25 add 0)
+      (!\getlength{\the\mylen}\space -0.25)
+    \uput[0](-0.2,0){#2} }}
 }
 \newcommand{\@@iffield}[2]{\!
   \psframebox*[framearc=.9,fillcolor=#1,framesep=1pt,shadow=true]{%
-    \color{white}\normalfont{\textsf{\bfseries #2}}%
-}}
+    \color{white}\normalfont{\textsf{\bfseries #2}}}
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                      \tfield{color}{text}                           %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -191,7 +200,7 @@
     \color{white}\normalfont{\textsf{\bfseries #2}}%
 }}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                            \nfield{text}                             %
+%                           \nfield{text}                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \def\nfield{\@ifstar\@@field\@field}
 \newcommand{\@field}[1]{%
@@ -224,7 +233,8 @@
   \psset{linearc=0.05,linestyle=solid,linewidth=1pt}
   \psset{fillstyle=none}
   \psset{fillcolor=white,fillstyle=solid}
-  \blockbase{\getlength{\the\mylen}}{0.811}{0.5}{.51}{0}{\strip@pt\xshift}{\strip@pt\yshift}
+  \blockbase{\getlength{\the\mylen}}{0.811}{0.5}{.51}{0}
+            {\strip@pt\xshift}{\strip@pt\yshift}
   \advance\yshift by -0.872pt % block height + a little bit
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -250,15 +260,15 @@
   \psset{shadow=true,shadowsize=1pt}
   \pscustom{%
    \blockbase{\getlength{\the\mylen}}{0.711}{0.5}{0.84}{0.3}{\strip@pt\xshift}{\strip@pt\mypos}
-	 \blockend{\getlength{\the\mylen}}{0.411}{0.84}{0.5}{0.3}{\strip@pt\xshift}{\strip@pt\yshift}
+   \blockend{\getlength{\the\mylen}}{0.411}{0.84}{0.5}{0.3}{\strip@pt\xshift}{\strip@pt\yshift}
    \closepath
    \closedshadow
   }
   \rput[0](!\strip@pt\xshift \space \strip@pt\mypos){
     \uput[0](!0 -0.711 2 div){\color{white}\textsf{\bfseries \@nameuse{text\arabic{cntr}}}}
     }
-	\rput[0](!\strip@pt\xshift\space \space \getlength{\the\mylen}\space add \strip@pt\yshift){
-		\uput[0]{-90}(!-0.55 -0.25){\color{white} \scalebox{1.2}{$\Lsh$} }
+  \rput[0](!\strip@pt\xshift\space \space \getlength{\the\mylen}\space add \strip@pt\yshift){
+    \uput[0]{-90}(!-0.55 -0.25){\color{white} \scalebox{1.2}{$\Lsh$} }
     }
   \advance\yshift by -0.472pt % block height + a little bit
   \addtocounter{cntr}{-1} %
@@ -273,10 +283,10 @@
   \blockflag
   \block{stylo}{effacer tout }
   \block{stylo}{stylo en position d'écriture}
-	\block{apparence}{mettre l'effet \lfield*{couleur} à \nfield{0} }
+  \block{apparence}{mettre l'effet \lfield*{couleur} à \nfield{0} }
   \repeatbegin{répéter \nfield{240} fois }
   \repeatbegin{répéter \nfield{4} fois }
-	\block{mouvement}{avancer de \tfield*{operateurs}{\tfield{donnees}{var} * \nfield{10} } \ }
+  \block{mouvement}{avancer de \tfield*{operateurs}{\tfield{donnees}{var} * \nfield{10} } \ }
   \repeatbegin{si \iffield{operateurs}{\lfield{2} < \lfield{3}}\ \ \  }
   \block{mouvement}{tourner \larrow de \nfield{90}  degrés }
   \repeatend
@@ -291,9 +301,9 @@
 \yshift=0pt       % pt will be removed : value is xunit
 %
 \begin{pspicture}(0,2)(4,-10)%
-	\blockevent{quand \lfield{fleche droite} est pressé}
+  \blockevent{quand \lfield*{fleche droite} est pressé}
   \block{mouvement}{s'orienter à \nfield*{90} }
-	\block{mouvement}{avancer de \tfield*{operateurs}{\tfield{donnees}{var} + \nfield{2} } \ }
+  \block{mouvement}{avancer de \tfield*{operateurs}{\tfield{donnees}{var} + \nfield{2} } \ }
   \block*{BLOC VIDE À COMPLÉTER }
 \end{pspicture}
 
