@@ -11,6 +11,10 @@ modifiable.
 Sur le site Melusine, on trouve un excellent travail permettant de produire de
 tels algorithmes en Metapost : http://melusine.eu.org/syracuse/G/mp-scratch/
 
+Sur CTAN, un projet TikZ permet aussi de produire des scripts Scratch  
+http://mirrors.ctan.org/macros/latex/contrib/scratch/scratch-fr.pdf  
+https://www.ctan.org/pkg/scratch
+
 Ici, c'est PSTricks qui est utilisé car c'est le langage graphique utilisé par
 l'APMEP, ce qui en fait (selon moi) une référence.
 
